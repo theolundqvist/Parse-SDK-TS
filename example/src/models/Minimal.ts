@@ -20,4 +20,9 @@ export class Minimal extends DbModel {
   constructor(data: Primitive.User) {
     super(data, Minimal.keys);
   }
+
+  // to be able to create a new instance and save
+  static create(){
+    return new Minimal(new Primitive.Object(Minimal.className));
+  }
 }
