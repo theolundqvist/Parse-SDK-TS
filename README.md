@@ -93,7 +93,7 @@ We are certain that the field is defined in the database, for example ```User.us
 | ------------- | ------------- |------------- |
 |  `Pointer` |`get` `set`| A reference to a single other object.  |
 |  `Relation` |`add` `remove`, `query`, `findAll` | A reference to a group of other objects. |
-|  `SynthesizedRelation` | `query`, `findAll` | Creates a relation from the fact that the target objects have a pointer to this object. |
+|  `SynthesizedRelation` | `query`, `findAll` | Creates a relation from the fact that the target class has a pointer to this object. |
 
 
 ## Special error handling
