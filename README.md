@@ -1,6 +1,6 @@
 # Parse-SDK-TS-typed
 A Parse Server client library for javascript/typescript that provides typings for database classes.
-Essentially just a wrapper for Parse-SDK-JS, to provide typings.
+Essentially just a wrapper for [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS), to provide typings.
 
 Tested in SSR environment on Next and Nuxt.
 
@@ -57,6 +57,12 @@ export class Minimal extends DbModel {
   }
 }
 ```
+To be able to create a new object without data you would want to add the following static method.
+```ts
+static create() {
+  return new Minimal(new Primitive.Object(Minimal.className));
+}
+```
 
 ## Attributes
 
@@ -87,7 +93,7 @@ We are certain that the field is defined in the database, for example ```User.us
 | ------------- | ------------- |------------- |
 |  `Pointer` |`get` `set`| A reference to a single other object.  |
 |  `Relation` |`add` `remove`, `query`, `findAll` | A reference to a group of other objects. |
-|  `SynthesizedRelation` | `query`, `findAll` | Creates a relation from the fact that the target objects have a pointer to this object. |
+|  `SynthesizedRelation` | `query`, `findAll` | Creates a relation from the fact that the target class has a pointer to this object. |
 
 
 ## Special error handling
