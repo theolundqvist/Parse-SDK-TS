@@ -57,6 +57,12 @@ export class Minimal extends DbModel {
   }
 }
 ```
+To be able to create a new object without data you would want to add the following static method.
+```ts
+static create() {
+  return new Minimal(new Primitive.Object(Minimal.className));
+}
+```
 
 ## Attributes
 
