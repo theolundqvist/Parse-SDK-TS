@@ -1,0 +1,38 @@
+{
+  "name": "parse-sdk-ts",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "scripts": {
+    "build": "rimraf -rf dist && tsc"
+  },
+  "keywords": [],
+  "author": "Theodor Lundqvist",
+  "dependencies": {
+    "@types/parse": "^3.0.4",
+    "parse": "^4.2.0"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
+  },
+
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./auth": "./dist/auth.js",
+    "./attributes": "./dist/attributes/index.js"
+  },
+  "typesVersions":{
+    "*":{
+      "auth": [
+        "./dist/auth.d.ts"
+      ],
+      "attributes": [
+        "./dist/attributes/index.d.ts"
+      ]
+    }
+  }
+}

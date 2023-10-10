@@ -1,0 +1,20 @@
+{
+  "name": "parse-sdk-ts-example",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rimraf -rf dist && tsc"
+  },
+  "keywords": [],
+  "author": "Theodor Lundqvist",
+  "dependencies": {
+    "parse-sdk-ts": "^1.0.0"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
+  }
+}
