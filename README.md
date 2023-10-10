@@ -6,6 +6,11 @@ Tested in SSR environment on Next and Nuxt.
 
 Please see `example/` folder for complete examples with imports.
 
+## Justification
+The Parse-SDK-JS API, is not only prone to spelling errors but is also exceedingly difficult to utilize for developers who are unfamiliar with the names of database keys.
+
+This API solves the problem by providing good typings so that frontend devs don't have to know the exakt key names.
+
 ## Setup
 
 `npm install parse-sdk-ts`
