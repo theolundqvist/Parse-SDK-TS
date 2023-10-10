@@ -17,7 +17,6 @@
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
   },
-
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -25,8 +24,8 @@
     "./auth": "./dist/auth.js",
     "./attributes": "./dist/attributes/index.js"
   },
-  "typesVersions":{
-    "*":{
+  "typesVersions": {
+    "*": {
       "auth": [
         "./dist/auth.d.ts"
       ],
