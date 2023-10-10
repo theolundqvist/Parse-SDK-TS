@@ -1,6 +1,6 @@
 # Parse-SDK-TS-typed
 A Parse Server client library for javascript/typescript that provides typings for database classes.
-Essentially just a wrapper for Parse-SDK-JS, to provide typings.
+Essentially just a wrapper for [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS), to provide typings.
 
 Tested in SSR environment on Next and Nuxt.
 
