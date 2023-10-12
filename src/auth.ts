@@ -39,8 +39,8 @@ export async function signOut(): Promise<void> {
   });
 }
 
-export async function requestPasswordReset(email: string) {
-  return DatabasePrimitive.User.requestPasswordReset(email);
+export async function requestPasswordReset(email: string): Promise<void> {
+  return DatabasePrimitive.User.requestPasswordReset(email).then(() => {});
 }
 
 export function current<T extends DbModel>(

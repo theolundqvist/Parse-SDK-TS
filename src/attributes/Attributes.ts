@@ -23,9 +23,7 @@ class Attribute<T> {
   }
 
   toJSON(): string {
-    if(typeof this.get() == "object")
-      return JSON.stringify(this.get());
-    return this.get() as unknown as string;
+    return this.get() as any;
   }
 }
 
@@ -125,7 +123,7 @@ export class Pointer<T extends DbModel> extends Attribute<T> {
     return this;
   }
 
-  toJSON():string {
+  toString():string {
     return `Pointer<${this.data.get(this.key).className}, ${this.data.get(this.key).id}>`;
   }
 }

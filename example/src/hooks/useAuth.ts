@@ -23,6 +23,6 @@ export function current(): User | null {
   return auth.current(User)
 }
 
-export function resetPassword(email: string): Promise<void> {
-  return auth.resetPassword(email)
+export function requestPasswordReset(email: string): Promise<void> {
+  return auth.requestPasswordReset(email)
 }
