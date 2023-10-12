@@ -40,6 +40,10 @@ export class OptionalBoolean extends Attribute<boolean|undefined>{}
 export class OptionalDate extends Attribute<Date|undefined>{}
 
 
+//TODO: add typed objects
+export class RequiredObject<Object> extends Attribute<Object>{}
+
+
 class Incrementable<T extends number | undefined> extends Attribute<T> {
   constructor(obj: DbModel, key: Key) {
     super(obj, key);
