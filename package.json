@@ -2,11 +2,12 @@
   "name": "parse-sdk-ts",
   "license": "Apache-2.0",
   "private": false,
-  "version": "1.0.2",
+  "version": "1.0.1",
   "type": "module",
   "description": "",
   "scripts": {
-    "build": "rimraf -rf dist && tsc"
+    "build": "rimraf -rf dist && tsc",
+    "release": "release-it"
   },
   "keywords": [],
   "author": "Theodor Lundqvist",
@@ -15,6 +16,7 @@
     "parse": "^4.2.0"
   },
   "devDependencies": {
+    "release-it": "^16.2.1",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
   },
