@@ -60,27 +60,18 @@ export abstract class DbModel {
     return this.data.fetch(options).then(() => this).catch(DbError.parse);
   }
 
-  toJSON(): object {
-    const temp = {
-      ...this,
-      createdAt: this.createdAt(),
-      updatedAt: this.updatedAt(),
-    } as any;
-    delete temp.data;
-    delete temp.keys;
-    return temp;
-  }
   printable(): Object {
     const temp = {
       ...this,
-      createdAt: this.createdAt(),
-      updatedAt: this.updatedAt(),
     } as any;
     delete temp.data;
     delete temp.keys;
     Object.keys(temp).forEach((k: any) => {
-      temp[k] = JSON.stringify(temp[k]) 
+      if(temp[k].toJSON)
+        temp[k] = temp[k].toJSON()
     })
+    temp.createdAt= this.createdAt()
+    temp.updatedAt= this.updatedAt()
     return temp;
   }
 }
