@@ -1,11 +1,11 @@
-import { DatabasePrimitive as Db } from "../db";
+import { Primitive } from "../db";
 import { Activatable, wrap } from "../util/Wrapper";
 import {  DbModel } from "../models/DbModel";
 import { Key } from "../misc/Key";
 import { Query } from "../misc/Query";
 
 class Attribute<T> {
-  protected data: Db.Object;
+  protected data: Primitive.Object;
   readonly key: string;
   constructor(obj: DbModel, key: Key) {
     this.data = obj.data;
@@ -90,7 +90,7 @@ class Arrayable<T> extends Attribute<T[]> {
 export class RequiredArray<T> extends Arrayable<T>{}
 export class OptionalArray<T> extends Arrayable<T|undefined>{}
 
-export class File extends Attribute<Db.File | undefined> {
+export class File extends Attribute<Primitive.File | undefined> {
   constructor(obj: DbModel, key: Key) {
     super(obj, key);
   }
@@ -129,7 +129,7 @@ export class Pointer<T extends DbModel> extends Attribute<T> {
 }
 
 export class Relation<T extends DbModel> {
-  private readonly data: Db.Object;
+  private readonly data: Primitive.Object;
   private readonly key: string;
   private readonly type: Activatable<T>;
 
@@ -169,7 +169,7 @@ export class Relation<T extends DbModel> {
  * Creates a realtion attribute that is synthezied from the fact that the target class has a pointer/relation to the current class.
  * */
 export class SynthesizedRelation<T extends DbModel>{
-  private readonly data: Db.Object;
+  private readonly data: Primitive.Object;
   private readonly type: Activatable<T>;
   private readonly targetKey: Key;
 
