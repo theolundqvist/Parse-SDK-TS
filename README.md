@@ -80,7 +80,7 @@ We are certain that the field is defined in the database, for example ```User.us
 | `Number`  | `RequiredNumber` |`get` `set` `increment` `decrement` |
 | `Boolean`  | `RequiredBoolean` |`get` `set`|
 | `Date`  | `RequiredDate` |`get` `set`|
-| `Array`  | `RequiredArray` |`get` `set` `append` `addUnique` `remove`|
+| `Array<T>`  | `RequiredArray` |`get` `set` `append` `addUnique` `remove`|
 
 ### Optional Attributes
 
@@ -90,15 +90,15 @@ We are certain that the field is defined in the database, for example ```User.us
 | `Number \| undefined`  | `OptionalNumber` | `get` `set` `increment` `decrement` |
 | `Boolean \| undefined`  | `OptionalBoolean` |`get` `set`|
 | `Date \| undefined`  | `OptionalDate` |`get` `set`|
-| `Array \| undefined`  | `OptionalArray` |`get` `set` `append` `addUnique` `remove`|
+| `Array<T> \| undefined`  | `OptionalArray` |`get` `set` `append` `addUnique` `remove`|
 
 ### Special Attributes
 
 |  Name |Methods| Note|
 | ------------- | ------------- |------------- |
-|  `Pointer` |`get` `set`| A reference to a single other object.  |
-|  `Relation` |`add` `remove`, `query`, `findAll` | A reference to a group of other objects. |
-|  `SynthesizedRelation` | `query`, `findAll` | Creates a relation from the fact that the target class has a pointer to this object. |
+|  `Pointer<T>` |`get` `set`| A reference to a single other object.  |
+|  `Relation<T>` |`add` `remove`, `query`, `findAll` | A reference to a group of other objects. |
+|  `SynthesizedRelation<T>` | `query`, `findAll` | Creates a relation from the fact that the target class has a pointer to this object. |
 
 
 ## Special error handling
@@ -142,7 +142,7 @@ or (with zod)
 
 ## Other
 
-`Parse` is exported as `DatabasePrimitive` from `parse-sdk-ts`.
+`Parse` is exported as `Primitive` from `parse-sdk-ts`. So `Parse.Object` is now `Primitive.Object`. We should never need to use it though.
 
 Other exports are:
 `isServer`, `useLocalTestServer`

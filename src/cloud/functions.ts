@@ -1,14 +1,14 @@
-import { DatabasePrimitive } from "../db";
+import { Primitive } from "../db";
 import { DbError } from "../misc";
 
 export async function joinCourse(courseId: string) : Promise<void> {
-  return DatabasePrimitive.Cloud.run("joinCourse", {
+  return Primitive.Cloud.run("joinCourse", {
     courseId: courseId 
   }).catch(DbError.parse)
 }
 
 export async function leaveCourse(courseId: string) : Promise<void> {
-  return DatabasePrimitive.Cloud.run("leaveCourse", {
+  return Primitive.Cloud.run("leaveCourse", {
     courseId: courseId 
   }).catch(DbError.parse)
 }
@@ -29,5 +29,5 @@ export async function call<T>(func: CloudFunction<T>) : Promise<T> {
     acc[param.name] = param.value
     return acc
   }, {} as any)
-  return DatabasePrimitive.Cloud.run(func.name, params).catch(DbError.parse)
+  return Primitive.Cloud.run(func.name, params).catch(DbError.parse)
 }

@@ -1,4 +1,4 @@
-import { DatabasePrimitive as Db } from "../db";
+import { Primitive } from "../db";
 import { DbModel} from "../models";
 import { DbError } from "./DbError";
 import { Key, KeyMap } from "./Key";
@@ -9,7 +9,7 @@ export class Query<T extends DbModel> {
   private readonly keys: string[];
   private readonly className: string;
   readonly targetClassName: string;
-  private q: Db.Query;
+  private q: Primitive.Query;
   private readonly options: { useMasterKey?: boolean } = {};
 
   /**
@@ -29,7 +29,7 @@ export class Query<T extends DbModel> {
       k.name
     );
     this.type = type;
-    this.q = new Db.Query(this.className);
+    this.q = new Primitive.Query(this.className);
   }
 
   /** Bypass access control by using the master key. Must be provided during initialization.*/
@@ -175,7 +175,7 @@ export class Query<T extends DbModel> {
 
   static wrap<T extends DbModel>(
     type: Activatable<T>,
-    query: Db.Query,
+    query: Primitive.Query,
   ): Query<T> {
     const other = new Query(type);
     other.q = query;

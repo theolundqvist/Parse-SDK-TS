@@ -1,4 +1,4 @@
-import { DatabasePrimitive as Db } from "../db";
+import { Primitive as Db } from "../db";
 
 export class DbError extends Db.Error {
   readonly meta: {};

@@ -1,10 +1,10 @@
-import { DatabasePrimitive as Db } from "../db";
+import { Primitive } from "../db";
 import { DbError } from "../misc";
 import {Key, KeyMap} from "../misc/Key";
 
 
 export abstract class DbModel {
-  readonly data: Db.Object;
+  readonly data: Primitive.Object;
   private readonly keys: KeyMap = {};
   /** The id of the object */
   id: string;
