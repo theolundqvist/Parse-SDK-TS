@@ -15,4 +15,4 @@ const initialize = (serverURL: string, appId: string) => {
   }
 }
 
-export { initialize, useLocalTestServer, isServer, Parse as Primitive };
+export { initialize, useLocalTestServer, isServer, Parse as Primitive, Parse as DatabasePrimitive };
