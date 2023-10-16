@@ -68,8 +68,8 @@ export abstract class DbModel {
     delete temp.data;
     delete temp.keys;
     Object.keys(temp).forEach((k: any) => {
-      if(temp[k].toString)
-        temp[k] = temp[k].toString()
+      if(temp[k] instanceof AttributeBase)
+        temp[k] = temp[k].printable()
     })
     temp.createdAt= this.createdAt()
     temp.updatedAt= this.updatedAt()

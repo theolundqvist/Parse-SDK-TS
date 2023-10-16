@@ -6,6 +6,7 @@ import { Query } from "../misc/Query";
 
 export abstract class AttributeBase {
   abstract toString(): string;
+  abstract printable(): any;
 }
 
 class Attribute<T> extends AttributeBase {
@@ -30,6 +31,7 @@ class Attribute<T> extends AttributeBase {
   toString(): string {
     return `${this.get()}`
   }
+  printable():any{ return this.get() }
 }
 
 /** Required means that the field will not be undefined in DB, it can still be null if we query with select or exclude or if object has not been saved yet */
@@ -108,6 +110,7 @@ export class File extends Attribute<Primitive.File | undefined> {
   toString(): string{
     return `File<${this.get()?.url().toString()}>` || "File<undefined>"
   }
+  printable(){ return {url: this.url()} }
 }
 
 export class Pointer<T extends DbModel> extends Attribute<T> {
@@ -135,6 +138,7 @@ export class Pointer<T extends DbModel> extends Attribute<T> {
   toString():string {
     return `Pointer<${this.data.get(this.key).className}, ${this.data.get(this.key).id}>`;
   }
+  printable(){ return this }
 }
 
 export class Relation<T extends DbModel> extends AttributeBase {
@@ -173,6 +177,7 @@ export class Relation<T extends DbModel> extends AttributeBase {
   toString() {
     return `Relation<${this.data.relation(this.key).targetClassName}>`;
   }
+  printable(){ return this }
 }
 
 /**
@@ -204,4 +209,5 @@ export class SynthesizedRelation<T extends DbModel> extends AttributeBase{
   toString() {
     return `SynthesizedRelation<${this.query().targetClassName}, ${this.targetKey.name}>`;
   }
+  printable(){ return this }
 }
