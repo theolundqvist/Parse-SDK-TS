@@ -10,14 +10,14 @@ import {
 
 
 export class Minimal extends DbModel {
-  static readonly className: string = "_User";
+  static readonly className: string = "_Minimal";
   static readonly keys = Key.build({
     client_key: "db_key",
   });
 
   readonly client_key = new RequiredString(this, Minimal.keys.client_key);
 
-  constructor(data: Primitive.User) {
+  constructor(data: Primitive.Object) {
     super(data, Minimal.keys);
   }
 

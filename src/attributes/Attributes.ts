@@ -4,10 +4,15 @@ import {  DbModel } from "../models/DbModel";
 import { Key } from "../misc/Key";
 import { Query } from "../misc/Query";
 
-class Attribute<T> {
+export abstract class AttributeBase {
+  abstract toString(): string;
+}
+
+class Attribute<T> extends AttributeBase {
   protected data: Primitive.Object;
   readonly key: string;
   constructor(obj: DbModel, key: Key) {
+    super();
     this.data = obj.data;
     this.key = key.name;
   }
@@ -22,8 +27,8 @@ class Attribute<T> {
     return this;
   }
 
-  toJSON(): string {
-    return this.get() as any;
+  toString(): string {
+    return `${this.get()}`
   }
 }
 
@@ -99,6 +104,10 @@ export class File extends Attribute<Primitive.File | undefined> {
   url(): string | undefined {
     return this.get()?.url();
   }
+
+  toString(): string{
+    return `File<${this.get()?.url().toString()}>` || "File<undefined>"
+  }
 }
 
 export class Pointer<T extends DbModel> extends Attribute<T> {
@@ -128,12 +137,13 @@ export class Pointer<T extends DbModel> extends Attribute<T> {
   }
 }
 
-export class Relation<T extends DbModel> {
+export class Relation<T extends DbModel> extends AttributeBase {
   private readonly data: Primitive.Object;
   private readonly key: string;
   private readonly type: Activatable<T>;
 
   constructor(type: Activatable<T>, obj: DbModel, key: Key) {
+    super()
     this.type = type;
     this.data = obj.data;
     this.key = key.name;
@@ -160,7 +170,7 @@ export class Relation<T extends DbModel> {
     return q.findAll();
   }
 
-  toJSON() {
+  toString() {
     return `Relation<${this.data.relation(this.key).targetClassName}>`;
   }
 }
@@ -168,12 +178,13 @@ export class Relation<T extends DbModel> {
 /**
  * Creates a realtion attribute that is synthezied from the fact that the target class has a pointer/relation to the current class.
  * */
-export class SynthesizedRelation<T extends DbModel>{
+export class SynthesizedRelation<T extends DbModel> extends AttributeBase{
   private readonly data: Primitive.Object;
   private readonly type: Activatable<T>;
   private readonly targetKey: Key;
 
   constructor(type: Activatable<T>, obj: DbModel, targetKey: Key) {
+    super()
     this.type = type;
     this.data = obj.data;
     this.targetKey = targetKey;
@@ -190,7 +201,7 @@ export class SynthesizedRelation<T extends DbModel>{
     return q.findAll();
   }
 
-  toJSON() {
+  toString() {
     return `SynthesizedRelation<${this.query().targetClassName}, ${this.targetKey.name}>`;
   }
 }

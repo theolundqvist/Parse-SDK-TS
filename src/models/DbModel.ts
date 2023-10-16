@@ -1,5 +1,6 @@
 import { Primitive } from "../db";
 import { DbError } from "../misc";
+import { AttributeBase } from "../attributes";
 import {Key, KeyMap} from "../misc/Key";
 
 
@@ -67,8 +68,8 @@ export abstract class DbModel {
     delete temp.data;
     delete temp.keys;
     Object.keys(temp).forEach((k: any) => {
-      if(temp[k].toJSON)
-        temp[k] = temp[k].toJSON()
+      if(temp[k].toString)
+        temp[k] = temp[k].toString()
     })
     temp.createdAt= this.createdAt()
     temp.updatedAt= this.updatedAt()
