@@ -6,7 +6,14 @@ import { Query } from "../misc/Query";
 
 export abstract class AttributeBase {
   abstract toString(): string;
-  abstract printable(): any;
+  printable(): any{
+    const temp = {
+      ...this,
+    } as any;
+    delete temp.data;
+    delete temp.type;
+    return temp;
+  };
 }
 
 class Attribute<T> extends AttributeBase {
@@ -110,7 +117,12 @@ export class File extends Attribute<Primitive.File | undefined> {
   toString(): string{
     return `File<${this.get()?.url().toString()}>` || "File<undefined>"
   }
-  printable(){ return {url: this.url()} }
+  printable(){  
+    if(this.url() == undefined) {
+      return {url: undefined}
+    }
+    else return {url: this.url()}
+  }
 }
 
 export class Pointer<T extends DbModel> extends Attribute<T> {
@@ -138,7 +150,18 @@ export class Pointer<T extends DbModel> extends Attribute<T> {
   toString():string {
     return `Pointer<${this.data.get(this.key).className}, ${this.data.get(this.key).id}>`;
   }
-  printable(){ return this }
+    printable(): any {
+    const temp = {
+      ...this,
+    } as any;
+    delete temp.data;
+    delete temp.type;
+    temp.attributeType = "Pointer"
+    temp.targetClassName = this.data.get(this.key).className;
+    temp.targetId = this.data.get(this.key).id;
+    return temp;
+  };
+
 }
 
 export class Relation<T extends DbModel> extends AttributeBase {
@@ -177,13 +200,24 @@ export class Relation<T extends DbModel> extends AttributeBase {
   toString() {
     return `Relation<${this.data.relation(this.key).targetClassName}>`;
   }
-  printable(){ return this }
+
+  printable(): any {
+    const temp = {
+      ...this,
+    } as any;
+    delete temp.data;
+    delete temp.type;
+    temp.attributeType = "Relation"
+    temp.targetClassName = this.query().targetClassName;
+    return temp;
+  };
 }
 
+
 /**
- * Creates a realtion attribute that is synthezied from the fact that the target class has a pointer/relation to the current class.
+ * Creates a synthetic relation attribute from the fact that the target class has a pointer/relation to the current class.
  * */
-export class SynthesizedRelation<T extends DbModel> extends AttributeBase{
+export class SyntheticRelation<T extends DbModel> extends AttributeBase{
   private readonly data: Primitive.Object;
   private readonly type: Activatable<T>;
   private readonly targetKey: Key;
@@ -207,7 +241,28 @@ export class SynthesizedRelation<T extends DbModel> extends AttributeBase{
   }
 
   toString() {
-    return `SynthesizedRelation<${this.query().targetClassName}, ${this.targetKey.name}>`;
+    return `SyntheticRelation<${this.query().targetClassName}, ${this.targetKey.name}>`;
   }
-  printable(){ return this }
+  printable(): any {
+    const temp = {
+      ...this,
+    } as any;
+    delete temp.data;
+    delete temp.type;
+    temp.attributeType = "SyntheticRelation"
+    temp.targetClassName = this.query().targetClassName;
+    temp.targetKey = this.targetKey.name;
+    return temp;
+  };
+
 }
+
+/** Obsolete (name change), use SyntheticRelation instead */
+export class SynthesizedRelation<T extends DbModel> extends SyntheticRelation<T>{}
+
+
+
+
+
+
+
