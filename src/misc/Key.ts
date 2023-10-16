@@ -12,7 +12,7 @@ export class Key {
     return result;
   }
   toString(): string {
-    return "Key("+this.name+")";
+    return "Key<"+this.name+">";
   }
 }
 export type KeyMap = { [key: string]: Key };
