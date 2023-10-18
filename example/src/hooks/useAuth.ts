@@ -24,5 +24,5 @@ export function current(): User | null {
 }
 
 export function requestPasswordReset(email: string): Promise<void> {
-  return auth.requestPasswordReset(email)
+  return auth.requestPasswordReset(email).then(() => {})
 }

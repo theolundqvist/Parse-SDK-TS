@@ -18,7 +18,7 @@ This API solves the problem by providing good typings so that frontend devs don'
 ```ts
 import { initialize }  from 'parse-sdk-ts'
 
-initialize(url, appid)
+initialize(server_url, app_id)
 ```
 
 
@@ -100,8 +100,35 @@ We are certain that the field is defined in the database, for example ```User.us
 |  `Relation<T>` |`add` `remove`, `query`, `findAll` | A reference to a group of other objects. |
 |  `SyntheticRelation<T>` | `query`, `findAll` | Synthesizes a relation attribute from the fact that the target class has a pointer to this object. |
 
+## Fallback
 
-## Special error handling
+If you need to run some code that is not supported by the API, you can access the Parse Object directly.
+```ts
+user.data.increment("reactions." + reactionType)
+```
+
+## Server side rendering
+
+Parse-SDK-TS is designed to work with server side rendering. It will automatically detect if it is running on the server. Note that it will never use the `parse/node` library but instead use the browser version with mocked localstorage. Note that ``
+
+If the master key is provided, Parse-SDK-TS will automatically load it when using the library on the server. 
+```ts
+// .env.local
+READONLY_MASTERKEY=...
+or
+MASTERKEY=... (priority)
+```
+
+We use the masterkey by doing the following.
+```ts
+user.save({ useMasterKey: true })
+query.find({ useMasterKey: true })
+or
+query.asMaster().find()
+user.saveAsMaster()
+```
+
+## Error meta data
 
 Errors are automatically split on `;;`, the left side is put into `message` and the right side JSON parsed and put into `meta`.
 

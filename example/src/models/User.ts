@@ -25,16 +25,18 @@ export class User extends DbModel {
   readonly image = new File(this, User.keys.image);
   readonly language = new OptionalString(this, User.keys.language);
   readonly email = new OptionalString(this, User.keys.email);
-  //readonly courses = new SyntheticRelation(Course, this, Course.keys.users);
+  // readonly courses = new SyntheticRelation(Course, this, Course.keys.users);
 
   constructor(data: Primitive.User) {
     super(data, User.keys);
   }
 
+  // add your own methods here
   getSessionToken() {
     return (this.data as Primitive.User).getSessionToken();
   }
 
+  // optional: User.query() is a shortcut for new Query(User)
   static query() {
     return new Query(User);
   }

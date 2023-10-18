@@ -32,7 +32,10 @@ export default function init(){
   global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
   // Parse.User.enableUnsafeCurrentUser(); //parse.current on node
   // (Parse.Object as any).enableSingleInstance();
-  Parse.masterKey = process.env.READONLY_MASTERKEY as string
+  if(process.env.MASTERKEY as string)
+    Parse.masterKey = process.env.MASTERKEY as string
+  else if (process.env.READONLY_MASTERKEY as string)
+    Parse.masterKey = process.env.READONLY_MASTERKEY as string
 
   (Parse.CoreManager as any).getRESTController()._setXHR(require('xmlhttprequest').XMLHttpRequest);
 
