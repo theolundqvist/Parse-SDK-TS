@@ -25,16 +25,16 @@ initialize(server_url, app_id)
 ## Auth
 ```ts
 import * as auth from 'parse-sdk-ts/auth'
-const user = await auth.signIn(..., ...)
+const user : MyUser = await auth.signIn(MyUser, username, password)
 ```
 
 ## Objects
 Data is accessed via attributes instead of via string keys.
 ```ts
 console.log(user.username.get())
-user.username.set("new name")
-user.level.increment()
-user.weapons.addUnique("sword")
+user.username.set("new name")    // string
+user.level.increment()           // number
+user.weapons.addUnique("sword")  // relation 
 user.save()
 ```
 
@@ -42,37 +42,71 @@ user.save()
 ## Queries
 The API is essentially the same as the Parse-SDK-JS but with Keys instead of strings.
 ```ts
-const users : User[] = new Query(User).ascending(User.keys.username).find()
+const users : MyUser[] = new Query(MyUser).ascending(MyUser.keys.username).find()
 ```
 
 
 ## Classes
 To provide typings, all classes on the database must be wrapped with some logic.
 ```ts
-export class Minimal extends DbModel {
-  static readonly className: string = "_Minimal";
+export class MyUser extends DbModel {
+  static readonly className: string = "_User";
   static readonly keys = Key.build({
-    client_key: "db_key",
+    username: "username",
   });
 
-  readonly client_key = new RequiredString(this, Minimal.keys.client_key);
+  readonly username = new RequiredString(this, MyUser.keys.username);
 
   constructor(data: Primitive.User) {
-    super(data, Minimal.keys);
+    super(data, MyUser.keys);
   }
 }
+```
+For a non-user object it's about the same
+```ts
+export class Book extends DbModel {
+  static readonly className: string = "Book";
+  static readonly keys = Key.build({
+    // client_key: "db_key",
+    title: "book_title",
+    description: "desc",
+    authors: "authors"
+  });
+
+  readonly title = new RequiredString(this, Book.keys.title);
+  readonly description = new RequiredString(this, Book.keys.description);
+  readonly authors = new Relation(Author, this, Book.keys.authors);
+
+  constructor(data: Primitive.Object) {
+    super(data, Book.keys);
+  }
+}
+```
+
+Attributes are found in a special import.
+```ts
+import { Relation } from "parse-sdk-ts/attributes"
 ```
 To be able to create a new object without data you would want to add the following static method.
 ```ts
 static create() {
-  return new Minimal(new Primitive.Object(Minimal.className));
+  return new Book(new Primitive.Object(Book.className));
+}
+```
+Or to ensure that `Required` attributes can't be undefined.
+```ts
+static create(title: string, description: string) {
+  const b = new Book(new Primitive.Object(Book.className));
+  b.title.set(title);
+  b.description.set(description);
+  return b;
 }
 ```
 
 ## Attributes
 
 ### Required Attributes 
-We are certain that the field is defined in the database, for example ```User.username```
+If we are certain that the field is defined in the database, for example ```User.username```
 
 | Type  | Name |Methods|
 | ------------- | ------------- |------------- |
