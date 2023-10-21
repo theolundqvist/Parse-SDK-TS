@@ -51,11 +51,11 @@ To provide typings, all classes on the database must be wrapped with some logic.
 ```ts
 export class MyUser extends DbModel {
   static readonly className: string = "_User";
-  static readonly keys = Key.build({
+  static readonly keys = Keys.build(MyUser, {
     username: "username",
   });
 
-  readonly username = new RequiredString(this, MyUser.keys.username);
+  readonly username = new _.RequiredString(this, MyUser.keys.username);
 
   constructor(data: Primitive.User) {
     super(data, MyUser.keys);
@@ -64,18 +64,21 @@ export class MyUser extends DbModel {
 ```
 For a non-user object it's about the same
 ```ts
+import * as _ from "parse-sdk-ts/attributes"
+import User from './User'
+
 export class Book extends DbModel {
   static readonly className: string = "Book";
-  static readonly keys = Key.build({
+  static readonly keys = Keys.build(Book, {
     // client_key: "db_key",
     title: "book_title",
+    authors: "authors",
     description: "desc",
-    authors: "authors"
   });
 
-  readonly title = new RequiredString(this, Book.keys.title);
-  readonly description = new RequiredString(this, Book.keys.description);
-  readonly authors = new Relation(Author, this, Book.keys.authors);
+  readonly title       = new _.RequiredString(this, Book.keys.title);
+  readonly authors     = new _.Relation(User, this, Book.keys.authors);
+  readonly description = new _.OptionalString(this, Book.keys.description);
 
   constructor(data: Primitive.Object) {
     super(data, Book.keys);
@@ -85,6 +88,8 @@ export class Book extends DbModel {
 
 Attributes are found in a special import.
 ```ts
+import * as _ from "parse-sdk-ts/attributes"
+// or
 import { Relation } from "parse-sdk-ts/attributes"
 ```
 To be able to create a new object without data you would want to add the following static method.
@@ -105,8 +110,20 @@ static create(title: string, description: string) {
 
 ## Attributes
 
+We differentiate between `Required` and `Optional` attributes. 
+
+If we are certain that the field is defined in the database, for example ```user.username.get()```,
+we can use a `Required` attribute so that we get `get(): string` instead of `get(): string | undefined`.
+
+Even `Required` attributes can be `undefined` if the object has not been fetched, or if we fetch it via a query with `exclude` or `select`.
+Therefore we can also specify an `fallback` value that will be returned if the `Required` attribute is `undefined`.
+
+```ts
+_.RequiredArray<string>(this, User.keys.weapons, [])
+```
+
+
 ### Required Attributes 
-If we are certain that the field is defined in the database, for example ```User.username```
 
 | Type  | Name |Methods|
 | ------------- | ------------- |------------- |
@@ -114,25 +131,31 @@ If we are certain that the field is defined in the database, for example ```User
 | `Number`  | `RequiredNumber` |`get` `set` `increment` `decrement` |
 | `Boolean`  | `RequiredBoolean` |`get` `set`|
 | `Date`  | `RequiredDate` |`get` `set`|
-| `Array<T>`  | `RequiredArray` |`get` `set` `append` `addUnique` `remove`|
+| `Array<T>`  | `RequiredArray<T>` |`get` `set` `append` `addUnique` `remove`|
 
 ### Optional Attributes
 
 | Type  | Name | Methods|
 | ------------- | ------------- |------------- |
-| `String \| undefined`  | `OptionalString` | `get` `set`|
-| `Number \| undefined`  | `OptionalNumber` | `get` `set` `increment` `decrement` |
-| `Boolean \| undefined`  | `OptionalBoolean` |`get` `set`|
-| `Date \| undefined`  | `OptionalDate` |`get` `set`|
-| `Array<T> \| undefined`  | `OptionalArray` |`get` `set` `append` `addUnique` `remove`|
+| `String \| undefined`  | `OptionalString` | `get` `set` `getOrElse` |
+| `Number \| undefined`  | `OptionalNumber` | `get` `set` `getOrElse` `increment` `decrement` |
+| `Boolean \| undefined`  | `OptionalBoolean` |`get` `set` `getOrElse`|
+| `Date \| undefined`  | `OptionalDate` |`get` `set` `getOrElse`|
+| `Array<T> \| undefined`  | `OptionalArray<T>` |`get` `set` `getOrElse` `append` `addUnique` `remove` |
 
 ### Special Attributes
+
+`T` denotes the type of the target DbModel class.
 
 |  Name |Methods| Note|
 | ------------- | ------------- |------------- |
 |  `Pointer<T>` |`get` `set`| A reference to a single other object.  |
+|  `StringPointer<T>` |`get` `set`| Same as `Pointer` but expects DB field to be a string (uuid) instead of Parse-Pointer.  |
 |  `Relation<T>` |`add` `remove`, `query`, `findAll` | A reference to a group of other objects. |
-|  `SyntheticRelation<T>` | `query`, `findAll` | Synthesizes a relation attribute from the fact that the target class has a pointer to this object. |
+|  `SyntheticRelation<T>` | `query`, `findAll` | Synthesizes a relation like attribute from the fact that the target class has a pointer to this object. |
+
+
+
 
 ## Fallback
 
@@ -141,15 +164,43 @@ If you need to run some code that is not supported by the API, you can access th
 user.data.increment("reactions." + reactionType)
 ```
 
+## Cloud Functions
+
+We can also declare typed cloud functoins in the following way.
+
+```ts 
+import { Cloud } from "parse-sdk-ts";
+
+export const myFunction = 
+Cloud.declare<(arg1: string, arg2: number) => number>(
+    "my_function",
+    ["arg1", "arg2"] // db expected argument names
+)
+
+const result:string = await myFunction("hello", 42)
+```
+
+It is even supported to pass our custom DbModel classes.
+```ts 
+import { Cloud, Primitive } from "parse-sdk-ts";
+
+const getAuthor = Cloud.declare<(book: Book) => Primitive.User>(
+    "get_author",
+    ["book"]
+)
+const author: User = new User(await getAuthor(book))
+```
+Note that it is NOT supported to return custom DbModel classes. Therefore we have to wrap the result our selves. 
+
 ## Server side rendering
 
-Parse-SDK-TS is designed to work with server side rendering. It will automatically detect if it is running on the server. Note that it will never use the `parse/node` library but instead use the browser version with mocked localstorage. Note that ``
+Parse-SDK-TS is designed to work with server side rendering. It will automatically detect if it is running on the server. Note that it will never use the `parse/node` library but instead use the browser version with mocked localstorage. I think that this works just as fine, though it also means that the server will have access to `auth` functions which it should not use.
 
-If the master key is provided, Parse-SDK-TS will automatically load it when using the library on the server. 
+If the master key is provided, Parse-SDK-TS will automatically load it when using the library on the server during initialization. 
 ```ts
 // .env.local
 READONLY_MASTERKEY=...
-or
+// or
 MASTERKEY=... (priority)
 ```
 

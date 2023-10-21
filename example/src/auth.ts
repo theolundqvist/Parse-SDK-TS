@@ -1,5 +1,6 @@
+
 import * as auth from "parse-sdk-ts/auth"
-import { User } from "../models/User"
+import { User } from "./models/User"
 
 // README
 // It is recommended to wrap the auth functions in your own hook. 
