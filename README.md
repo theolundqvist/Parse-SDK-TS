@@ -166,7 +166,7 @@ user.data.increment("reactions." + reactionType)
 
 ## Cloud Functions
 
-We can also declare typed cloud functoins in the following way.
+We can also declare typed cloud functions in the following way.
 
 ```ts 
 import { Cloud } from "parse-sdk-ts";
