@@ -80,7 +80,7 @@ export class Book extends DbModel {
   readonly authors     = new _.Relation(User, this, Book.keys.authors);
   readonly description = new _.OptionalString(this, Book.keys.description);
 
-  constructor(data: Primitive.Object) {
+  constructor(data: Primitive.Object) {   // Note argument type
     super(data, Book.keys);
   }
 }
@@ -166,7 +166,7 @@ user.data.increment("reactions." + reactionType)
 
 ## Cloud Functions
 
-We can also declare typed cloud functoins in the following way.
+We can also declare typed cloud functions in the following way.
 
 ```ts 
 import { Cloud } from "parse-sdk-ts";
