@@ -9,7 +9,7 @@
     "build": "rimraf -rf dist && tsc",
     "release": "release-it"
   },
-  "keywords": [],
+  "keywords": ["parse", "server", "sdk", "typescript", "javascript", "typed", "type-safety", "type-safe"],
   "author": "Theodor Lundqvist",
   "dependencies": {
     "@types/parse": "^3.0.4",
