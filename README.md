@@ -1,3 +1,6 @@
+[![npm version](https://badge.fury.io/js/parse-sdk-ts.svg)](https://badge.fury.io/js/parse-sdk-ts)
+[![License](https://img.shields.io/badge/License-Apache2.0-blue.svg)](https://opensource.org/licenses/Apache2.0)
+
 # Parse-SDK-TS-typed
 A Parse Server client library for javascript/typescript that provides typings for database classes.
 Essentially just a wrapper for [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS), to provide typings.
