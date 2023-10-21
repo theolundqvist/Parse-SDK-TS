@@ -80,7 +80,7 @@ export class Book extends DbModel {
   readonly authors     = new _.Relation(User, this, Book.keys.authors);
   readonly description = new _.OptionalString(this, Book.keys.description);
 
-  constructor(data: Primitive.Object) {
+  constructor(data: Primitive.Object) {   // Note argument type
     super(data, Book.keys);
   }
 }
