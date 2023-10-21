@@ -1,7 +1,7 @@
 import { Primitive } from "../db";
 import { DbModel} from "../models";
 import { DbError } from "./DbError";
-import { Key, KeyMap } from "./Key";
+import { IKey } from "./Key";
 import { Activatable, wrap } from "../util/Wrapper";
 
 export class Query<T extends DbModel> {
@@ -25,7 +25,7 @@ export class Query<T extends DbModel> {
 
     this.className = (type as any).className;
     this.targetClassName = this.className;
-    this.keys = Object.values(((type as any).keys) as KeyMap).map((k) =>
+    this.keys = Object.values(((type as any).keys) as {[key:string]: IKey}).map((k) =>
       k.name
     );
     this.type = type;
@@ -42,7 +42,7 @@ export class Query<T extends DbModel> {
   }
 
   /** Checks if the key is present in `keys`. If not, an error is thrown.*/
-  private checkKey(key: Key) {
+  private checkKey(key: IKey) {
     // console.log(this.keys)
     if (!this.keys.includes(key.name)) {
       throw new Error(`Key ${key.name} does not exist on ${this.className}.`);
@@ -90,7 +90,7 @@ export class Query<T extends DbModel> {
   }
 
   /** Matches a field (`key`) with a specific `value`*/
-  equalTo(key: Key, value: any): this {
+  equalTo(key: IKey, value: any): this {
     if (value instanceof DbModel) value = value.data;
     this.checkKey(key);
     this.q.equalTo(key.name, value);
@@ -98,21 +98,21 @@ export class Query<T extends DbModel> {
   }
 
   /** Excludes fields (`key`) from the query*/
-  exclude(...key: Key[]): this {
+  exclude(...key: IKey[]): this {
     key.forEach((k) => this.checkKey(k));
     this.q.exclude(...key.map((k) => k.name));
     return this;
   }
 
   /** Selects fields (`keys`) to be returned by the query*/
-  select(...keys: Key[]): this {
+  select(...keys: IKey[]): this {
     keys.forEach((k) => this.checkKey(k));
     this.q.select(...keys.map((k) => k.name));
     return this;
   }
 
   /** Include pointers (`keys`) in the query result*/
-  includePointed(...keys: Key[]): this {
+  includePointed(...keys: IKey[]): this {
     keys.forEach((k) => this.checkKey(k));
     this.q.include(...keys.map((k) => k.name));
     return this;
@@ -125,49 +125,49 @@ export class Query<T extends DbModel> {
   }
 
   /** Orders results in ascending order by a specified `key`*/
-  ascending(key: Key): this {
+  ascending(key: IKey): this {
     this.checkKey(key);
     this.q.ascending(key.name);
     return this;
   }
 
   /** Orders results in descending order by a specified `key`*/
-  descending(key: Key): this {
+  descending(key: IKey): this {
     this.checkKey(key);
     this.q.addDescending(key.name);
     return this;
   }
 
   /** Adds a condition where the value of a field (`key`) must start with a specified `prefix`*/
-  startsWith(key: Key, prefix: string): this {
+  startsWith(key: IKey, prefix: string): this {
     this.checkKey(key);
     this.q.startsWith(key.name, prefix);
     return this;
   }
 
   /** Adds a condition where the value of a field (`key`) must be less than the (`value`)*/
-  less(key: Key, value: any): this {
+  less(key: IKey, value: any): this {
     this.checkKey(key);
     this.q.lessThan(key.name, value);
     return this;
   }
 
   /** Adds a condition where the value of a field (`key`) must be less than or equal the (`value`)*/
-  lessOrEqual(key: Key, value: any): this {
+  lessOrEqual(key: IKey, value: any): this {
     this.checkKey(key);
     this.q.lessThanOrEqualTo(key.name, value);
     return this;
   }
 
   /** Adds a condition where the value of a field (`key`) must be greater than the (`value`)*/
-  greater(key: Key, value: any): this {
+  greater(key: IKey, value: any): this {
     this.checkKey(key);
     this.q.greaterThan(key.name, value);
     return this;
   }
 
   /** Adds a condition where the value of a field (`key`) must be greater than or equal the (`value`)*/
-  greaterOrEqual(key: Key, value: any): this {
+  greaterOrEqual(key: IKey, value: any): this {
     this.checkKey(key);
     this.q.greaterThanOrEqualTo(key.name, value);
     return this;

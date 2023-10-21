@@ -14,7 +14,15 @@ export abstract class AttributeBase {
     } as any;
     delete temp.data;
     delete temp.type;
+    delete temp.obj;
     return temp;
+  }
+  toJSON(): string {
+    const temp = {
+      ...this,
+    } as any;
+    delete temp.obj;
+    return JSON.stringify(temp);
   }
 }
 
@@ -33,10 +41,11 @@ export class Attribute<T> extends AttributeBase {
   /** Get a locally available field */
   get(): T {
     const d = this.data.get(this.key);
-    // if fallback is not specified
-    if (this.fallback === undefined) return d;
-    // if fallback is specified
-    return d === undefined ? this.fallback : d;
+    return d;
+    // // if fallback is not specified
+    // if (this.fallback === undefined) return d;
+    // // if fallback is specified
+    // return d === undefined ? this.fallback : d;
   }
 
   /** Update a field */
@@ -76,16 +85,6 @@ export class OptionalDate extends OptionalAttribute<Date> { }
 //TODO: add typed objects
 export class RequiredObject<Object> extends Attribute<Object> { }
 
-
-
-
-
-
-
-
-
-
-
 // ARRAY ATTRIBUTES
 // We got some code duplication here, but trust me, we will be ok.
 
@@ -95,7 +94,7 @@ interface Arrayable<T> {
   remove(item: T): this;
 }
 
- class RequiredArray<T> extends Attribute<T[]> implements Arrayable<T> {
+export class RequiredArray<T> extends Attribute<T[]> implements Arrayable<T> {
   /** Add an item to the end of a list */
   append(item: T) {
     this.data.add(this.key, item);
@@ -115,7 +114,7 @@ interface Arrayable<T> {
   }
 }
 
- class OptionalArray<T> extends Attribute<T[] | undefined>
+export class OptionalArray<T> extends Attribute<T[] | undefined>
   implements Arrayable<T> {
   /** Add an item to the end of a list */
   append(item: T) {
@@ -143,8 +142,9 @@ interface Incrementable<T> {
   increment(value: T): this;
   decrement(value: T): this;
 }
- class RequiredNumber
-  extends Attribute<number> implements Incrementable<number> {
+
+export class RequiredNumber extends Attribute<number>
+  implements Incrementable<number> {
   /** Increment a field */
   increment(value: number) {
     this.data.increment(this.key, value);
@@ -157,9 +157,9 @@ interface Incrementable<T> {
     return this;
   }
 }
- class OptionalNumber
-  extends Attribute<number|undefined> implements Incrementable<number> {
 
+export class OptionalNumber extends Attribute<number | undefined>
+  implements Incrementable<number> {
   /** Increment a field */
   increment(value: number) {
     this.data.increment(this.key, value);
@@ -221,10 +221,65 @@ export class Pointer<T extends DbModel> extends Attribute<T> {
       ...this,
     } as any;
     delete temp.data;
+    delete temp.obj;
     delete temp.type;
     temp.attributeType = "Pointer";
     temp.targetClassName = this.data.get(this.key).className;
     temp.targetId = this.data.get(this.key).id;
+    return temp;
+  }
+}
+
+export class StringPointer<T extends DbModel> extends AttributeBase {
+  private readonly type: Activatable<T>;
+  private readonly obj: DbModel;
+  private readonly data: Primitive.Object;
+  private readonly key: string;
+
+  constructor(type: Activatable<T>, obj: DbModel, key: Key) {
+    super();
+    this.type = type;
+    this.obj = obj;
+    this.key = key.name;
+    this.data = obj.data;
+  }
+
+  private className = () => (new this.type()).className;
+
+  get(): T | undefined {
+    const d : string | undefined = this.data?.get(this.key);
+    if(d === undefined) return undefined;
+
+    const t = Primitive.Object.extend(this.className());
+    const pointer = t.createWithoutData(d);
+
+    return wrap(this.type, pointer);
+  }
+
+  set(obj: DbModel | string | undefined): this {
+    if (typeof obj === "string") {
+      this.data.set(this.key, obj);
+    } else if (typeof obj === "undefined"){
+      this.data.set(this.key, undefined);
+    } else {
+      this.data.set(this.key, obj.id);
+    }
+    return this;
+  }
+
+  toString(): string {
+    return `Pointer<${this.className()}, ${this.data.get(this.key)}>`;
+  }
+  printable(): any {
+    const temp = {
+      ...this,
+    } as any;
+    delete temp.data;
+    delete temp.obj;
+    delete temp.type;
+    temp.attributeType = "Pointer";
+    temp.targetClassName = this.className();
+    temp.targetId = this.data.get(this.key);
     return temp;
   }
 }
@@ -271,6 +326,7 @@ export class Relation<T extends DbModel> extends AttributeBase {
       ...this,
     } as any;
     delete temp.data;
+    delete temp.obj;
     delete temp.type;
     temp.attributeType = "Relation";
     temp.targetClassName = this.query().targetClassName;
@@ -312,6 +368,7 @@ export class SyntheticRelation<T extends DbModel> extends AttributeBase {
       ...this,
     } as any;
     delete temp.data;
+    delete temp.obj;
     delete temp.type;
     temp.attributeType = "SyntheticRelation";
     temp.targetClassName = this.query().targetClassName;

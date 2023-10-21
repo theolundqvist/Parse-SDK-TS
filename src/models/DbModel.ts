@@ -1,7 +1,7 @@
 import { Primitive } from "../db";
 import { DbError } from "../misc";
 import { AttributeBase } from "../attributes";
-import {Key, KeyMap} from "../misc/Key";
+import {KeyMap} from "../misc/Key";
 
 
 export abstract class DbModel {
