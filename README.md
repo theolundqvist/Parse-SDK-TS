@@ -211,7 +211,7 @@ We use the masterkey by doing the following.
 ```ts
 user.save({ useMasterKey: true })
 query.find({ useMasterKey: true })
-or
+// or
 query.asMaster().find()
 user.saveAsMaster()
 ```
