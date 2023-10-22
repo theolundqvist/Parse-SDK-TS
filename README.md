@@ -199,6 +199,12 @@ Note that it is NOT supported to return custom DbModel classes. Therefore we hav
 
 Parse-SDK-TS is designed to work with server side rendering. It will automatically detect if it is running on the server. Note that it will never use the `parse/node` library but instead use the browser version with mocked localstorage. I think that this works just as fine, though it also means that the server will have access to `auth` functions which it should not use.
 
+You should set the following environment variable to ignore the warning about this.
+```ts
+// .env
+SERVER_RENDERING=true
+```
+
 If the master key is provided, Parse-SDK-TS will automatically load it when using the library on the server during initialization. 
 ```ts
 // .env.local
