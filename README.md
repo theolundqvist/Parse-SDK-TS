@@ -193,7 +193,7 @@ const getAuthor = Cloud.declare<(book: Book) => Primitive.User>(
 )
 const author: User = new User(await getAuthor(book))
 ```
-Note that it is NOT supported to return custom DbModel classes. Therefore we have to wrap the result our selves. 
+Note that it is NOT supported to return custom DbModel classes. Therefore we have to wrap the result ourselves. 
 
 ## Server side rendering
 
