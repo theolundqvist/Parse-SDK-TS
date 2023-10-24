@@ -2,8 +2,9 @@
 [![License](https://img.shields.io/badge/License-Apache2.0-blue.svg)](https://opensource.org/licenses/Apache2.0)
 
 # Parse-SDK-TS-typed
-A Parse Server client library for javascript/typescript that provides typings for database classes.
-Essentially just a wrapper for [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS), to provide typings.
+A client side library for typescript that provides type-safety for database classes, queries and cloud functions.
+
+Built on top of [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS).
 
 Tested in SSR environment on Next and Nuxt.
 
