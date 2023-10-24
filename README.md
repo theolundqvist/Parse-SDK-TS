@@ -6,15 +6,26 @@ A client side library for typescript that provides type-safety for database clas
 
 Built on top of [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS).
 
-Tested in SSR environment on Next and Nuxt.
+Tested in SSR environment on Next and Nuxt. 🧪
 
-Please see `example/` folder for complete examples with imports.
+
 
 ## Justification
 The Parse-SDK-JS API, is not only prone to spelling errors but is also exceedingly difficult to utilize for developers who are unfamiliar with the names of database keys.
+```ts
+book.set("author", "Tolkien") // 😰 everything accepted
+// is now
+book.author.set("Tolkien") // 🚀 only string accepted
+```
+And more importantly:
+```ts
+book.get("???") // 😰
+// is now
+book.author.get() // 🚀 full code completion
+```
 
-This API solves the problem by providing good typings so that frontend devs don't have to know the exakt key names.
 
+Please see `example/` folder for complete examples with imports.
 ## Setup
 
 `npm install parse-sdk-ts`
