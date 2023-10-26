@@ -13,7 +13,7 @@ Tested in SSR environment on Next and Nuxt. 🧪
 ## Justification
 The Parse-SDK-JS API, is not only prone to spelling errors but is also exceedingly difficult to utilize for developers who are unfamiliar with the names of database keys.
 ```ts
-book.set("author", "Tolkien") // 😰 everything accepted
+book.set("author", "Tolkien") // 😰 anything accepted
 // is now
 book.author.set("Tolkien") // 🚀 only string accepted
 ```
