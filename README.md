@@ -1,16 +1,31 @@
-# Parse-SDK-TS-typed
-A Parse Server client library for javascript/typescript that provides typings for database classes.
-Essentially just a wrapper for [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS), to provide typings.
+[![npm version](https://badge.fury.io/js/parse-sdk-ts.svg)](https://badge.fury.io/js/parse-sdk-ts)
+[![License](https://img.shields.io/badge/License-Apache2.0-blue.svg)](https://opensource.org/licenses/Apache2.0)
 
-Tested in SSR environment on Next and Nuxt.
+# Parse-SDK-TS
+A client side library for typescript that provides type-safety for database classes, queries and cloud functions.
 
-Please see `example/` folder for complete examples with imports.
+Built on top of [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS).
+
+Tested in SSR environment on Next and Nuxt. 🧪
+
+
 
 ## Justification
 The Parse-SDK-JS API, is not only prone to spelling errors but is also exceedingly difficult to utilize for developers who are unfamiliar with the names of database keys.
+```ts
+book.set("author", "Tolkien") // 😰 anything accepted
+// is now
+book.author.set("Tolkien") // 🚀 only string accepted
+```
+And more importantly:
+```ts
+book.get("???") // 😰
+// is now
+book.author.get() // 🚀 full code completion
+```
 
-This API solves the problem by providing good typings so that frontend devs don't have to know the exakt key names.
 
+Please see `example/` folder for complete examples with imports.
 ## Setup
 
 `npm install parse-sdk-ts`
@@ -190,11 +205,17 @@ const getAuthor = Cloud.declare<(book: Book) => Primitive.User>(
 )
 const author: User = new User(await getAuthor(book))
 ```
-Note that it is NOT supported to return custom DbModel classes. Therefore we have to wrap the result our selves. 
+Note that it is NOT supported to return custom DbModel classes. Therefore we have to wrap the result ourselves. 
 
 ## Server side rendering
 
 Parse-SDK-TS is designed to work with server side rendering. It will automatically detect if it is running on the server. Note that it will never use the `parse/node` library but instead use the browser version with mocked localstorage. I think that this works just as fine, though it also means that the server will have access to `auth` functions which it should not use.
+
+You should set the following environment variable to ignore the warning about this.
+```ts
+// .env
+SERVER_RENDERING=true
+```
 
 If the master key is provided, Parse-SDK-TS will automatically load it when using the library on the server during initialization. 
 ```ts
@@ -208,7 +229,7 @@ We use the masterkey by doing the following.
 ```ts
 user.save({ useMasterKey: true })
 query.find({ useMasterKey: true })
-or
+// or
 query.asMaster().find()
 user.saveAsMaster()
 ```
