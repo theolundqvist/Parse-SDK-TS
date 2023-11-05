@@ -2,12 +2,12 @@
   "name": "parse-sdk-ts",
   "license": "Apache-2.0",
   "private": false,
-  "version": "1.1.0-2",
+  "version": "1.2.0",
   "type": "module",
   "description": "",
   "scripts": {
     "build": "rimraf -rf dist && tsc",
-    "check": "madge --extensions js,ts --circular .",
+    "check": "npm run build && madge --extensions js,ts --circular .",
     "release": "release-it"
   },
   "keywords": [
