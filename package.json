@@ -1,10 +1,10 @@
-{
+∆{
   "name": "parse-sdk-ts",
   "license": "Apache-2.0",
   "private": false,
-  "version": "1.1.0-2",
+  "version": "1.1.0-3",
   "type": "module",
-  "description": "",
+  "description": "A client/server library for typescript that provides type-safety for database classes, queries and cloud functions.",
   "scripts": {
     "build": "rimraf -rf dist && tsc",
     "release": "release-it"
