@@ -1,24 +1,34 @@
 import { Primitive } from "../db";
-import { DbError } from "../misc";
-import { AttributeBase } from "../attributes";
-import {KeyMap} from "../misc/Key";
+import { DbError } from "../misc/DbError";
+import { AttributeBase, AttributeBuilder } from "../attributes";
+import { IDbModel } from "./IDbModel";
+import { Activatable } from "../util/Activatable";
 
+export function field<T extends IDbModel>(model: T) {
+  return AttributeBuilder.create(model)
+}
 
-export abstract class DbModel {
+export abstract class DbModel implements IDbModel {
   readonly data: Primitive.Object;
-  private readonly keys: KeyMap = {};
   /** The id of the object */
   id: string;
   /** The database className of the object */
   readonly className: string;
 
-  constructor(data: Parse.Object, keys: KeyMap) {
+  constructor(data: Parse.Object) {
     if (!data) throw new Error("Tried to create DbModel of undefined");
     this.data = data;
-    this.keys = keys;
     this.id = data.id;
     this.className = data.className;
     // this.className = data.className;
+  }
+
+  static createWithoutData<T extends IDbModel>(target: Activatable<T>):T {
+    return new target(new Primitive.Object((target as any).className));
+  }
+
+  protected field() {
+    return AttributeBuilder.create(this);
   }
 
   /** The time the object was created */
@@ -44,7 +54,7 @@ export abstract class DbModel {
   }
 
   /** Delete the object from the database */
-  async destroy(options: {useMasterKey?: boolean} = {}) {
+  async destroy(options: { useMasterKey?: boolean } = {}) {
     return this.data.destroy(options).catch(DbError.parse);
   }
 
@@ -57,7 +67,7 @@ export abstract class DbModel {
     return this.data.getACL();
   }
 
-  async fetch(options: {useMasterKey?: boolean} = {}) {
+  async fetch(options: { useMasterKey?: boolean } = {}) {
     return this.data.fetch(options).then(() => this).catch(DbError.parse);
   }
 
@@ -66,13 +76,13 @@ export abstract class DbModel {
       ...this,
     } as any;
     delete temp.data;
-    delete temp.keys;
     Object.keys(temp).forEach((k: any) => {
-      if(temp[k] instanceof AttributeBase)
-        temp[k] = temp[k].printable()
-    })
-    temp.createdAt= this.createdAt()
-    temp.updatedAt= this.updatedAt()
+      if (temp[k] instanceof AttributeBase) {
+        temp[k] = temp[k].printable();
+      }
+    });
+    temp.createdAt = this.createdAt();
+    temp.updatedAt = this.updatedAt();
     return temp;
   }
 }

@@ -1,4 +1,4 @@
-import { DbModel } from "../models/DbModel";
+import { IDbModel } from "../models/IDbModel";
 import { Activatable } from "../util";
 
 export interface IKey{
@@ -29,7 +29,7 @@ export class Key implements IKey{
   }
 }
 
-export class TypedKey<T extends DbModel> implements IKey {
+export class TypedKey<T extends IDbModel> implements IKey {
   constructor(readonly name: string) { }
   toString(): string {
     return "Key<" + this.name + ">";
@@ -37,7 +37,7 @@ export class TypedKey<T extends DbModel> implements IKey {
 }
 
 export class Keys {
-  static build<G extends DbModel, T>(
+  static build<G extends IDbModel, T>(
     modelType: Activatable<G>,
     keyNameMap: { [K in keyof T]: T[K] },
   ): { [K in keyof T]: TypedKey<G> } {

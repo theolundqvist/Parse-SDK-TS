@@ -2,23 +2,37 @@
   "name": "parse-sdk-ts",
   "license": "Apache-2.0",
   "private": false,
-  "version": "1.1.0-3",
+  "version": "1.2.0",
   "type": "module",
   "description": "A client/server library for typescript that provides type-safety for database classes, queries and cloud functions.",
   "scripts": {
     "build": "rimraf -rf dist && tsc",
+    "check": "npm run build && madge --extensions js,ts --circular .",
     "release": "release-it"
   },
-  "keywords": ["parse", "server", "sdk", "typescript", "javascript", "typed", "type-safety", "type-safe"],
+  "keywords": [
+    "parse",
+    "server",
+    "sdk",
+    "typescript",
+    "javascript",
+    "typed",
+    "type-safety",
+    "type-safe"
+  ],
   "author": "Theodor Lundqvist",
   "dependencies": {
-    "@types/parse": "^3.0.4",
-    "parse": "^4.2.0"
+    "@types/parse": "3.0.4",
+    "crypto-js": "^4.2.0"
+  },
+  "peerDependencies": {
+    "parse": ">3.4.0"
   },
   "devDependencies": {
-    "release-it": "^16.2.1",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.2.2"
+    "madge": "6.1.0",
+    "release-it": "16.2.1",
+    "rimraf": "5.0.5",
+    "typescript": "5.2.2"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

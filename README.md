@@ -1,7 +1,7 @@
 # Parse Typescript SDK
 A client/server library for typescript that provides type-safety for database classes, queries and cloud functions.
 
-Built on top of [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS).
+Built on top of [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS), which is a version agnostic peer dependency.
 
 Tested in SSR environment on Next and Nuxt. 🧪
 
@@ -66,108 +66,108 @@ To provide typings, all classes on the database must be wrapped with some logic.
 ```ts
 export class MyUser extends DbModel {
   static readonly className: string = "_User";
+
   static readonly keys = Keys.build(MyUser, {
     username: "username",
   });
 
-  readonly username = new _.RequiredString(this, MyUser.keys.username);
+  readonly username = field(this).required().string(MyUser.keys.username);
 
+  // to make sure only Parse.User can be passed
   constructor(data: Primitive.User) {
-    super(data, MyUser.keys);
+    super(data);
   }
 }
 ```
-For a non-user object it's about the same
+For a non-user object it's the same
 ```ts
-import * as _ from "parse-sdk-ts/attributes"
 import User from './User'
 
 export class Book extends DbModel {
   static readonly className: string = "Book";
+
+  // client_key: "db_key", //
   static readonly keys = Keys.build(Book, {
-    // client_key: "db_key",
     title: "book_title",
     authors: "authors",
     description: "desc",
   });
 
-  readonly title       = new _.RequiredString(this, Book.keys.title);
-  readonly authors     = new _.Relation(User, this, Book.keys.authors);
-  readonly description = new _.OptionalString(this, Book.keys.description);
-
-  constructor(data: Primitive.Object) {   // Note argument type
-    super(data, Book.keys);
-  }
+  readonly title       = field(this).required().string(Book.keys.title);
+  readonly authors     = field(this).relation(User, Book.keys.authors);
+  readonly description = field(this).string(Book.keys.description);
 }
 ```
 
-Attributes are found in a special import.
+To import the `field` function: 
 ```ts
-import * as _ from "parse-sdk-ts/attributes"
-// or
-import { Relation } from "parse-sdk-ts/attributes"
+import { field } from "parse-sdk-ts"
+// or just use the quickhand
+readonly title = this.field().string(Book.keys.title);
 ```
-To be able to create a new object without data you would want to add the following static method.
+
+To be able to create a new object without data you may want to add the following static method.
 ```ts
 static create() {
-  return new Book(new Primitive.Object(Book.className));
+  return DbModel.createWithoutData(Book);
 }
 ```
-Or to ensure that `Required` attributes can't be undefined.
+Or to ensure that `Required` fields can't be undefined.
 ```ts
 static create(title: string, description: string) {
-  const b = new Book(new Primitive.Object(Book.className));
+  const b = DbModel.createWithoutData(Book);
   b.title.set(title);
   b.description.set(description);
   return b;
 }
 ```
 
-## Attributes
+## Fields
 
-We differentiate between `Required` and `Optional` attributes. 
+We differentiate between `Required` and `Optional` fields. 
 
 If we are certain that the field is defined in the database, for example ```user.username.get()```,
-we can use a `Required` attribute so that we get `get(): string` instead of `get(): string | undefined`.
+we can use a `Required` field so that we get `get(): string` instead of `get(): string | undefined`.
 
-Even `Required` attributes can be `undefined` if the object has not been fetched, or if we fetch it via a query with `exclude` or `select`.
-Therefore we can also specify an `fallback` value that will be returned if the `Required` attribute is `undefined`.
+Even `Required` fields can be `undefined` if the object has not been fetched, or if we fetch it via a query with `exclude` or `select`.
+Therefore we can also specify an `fallback` value that will be returned if the `Required` field is `undefined`.
 
 ```ts
-_.RequiredArray<string>(this, User.keys.weapons, [])
+field(this).required(fallback).string(User.keys.username)
 ```
 
 
-### Required Attributes 
+### Required Fields 
 
 | Type  | Name |Methods|
 | ------------- | ------------- |------------- |
-| `String`  | `RequiredString` |`get` `set`|
-| `Number`  | `RequiredNumber` |`get` `set` `increment` `decrement` |
-| `Boolean`  | `RequiredBoolean` |`get` `set`|
-| `Date`  | `RequiredDate` |`get` `set`|
-| `Array<T>`  | `RequiredArray<T>` |`get` `set` `append` `addUnique` `remove`|
+| `String`  | `.required().string` |`get` `set`|
+| `Number`  | `.required().number` |`get` `set` `increment` `decrement` |
+| `Boolean`  | `.required().boolean` |`get` `set`|
+| `Date`  | `.required().date` |`get` `set`|
+| `Array<T>`  | `.required.array<T>` |`get` `set` `append` `addUnique` `remove`|
 
-### Optional Attributes
+### Optional Fields
 
 | Type  | Name | Methods|
 | ------------- | ------------- |------------- |
-| `String \| undefined`  | `OptionalString` | `get` `set` `getOrElse` |
-| `Number \| undefined`  | `OptionalNumber` | `get` `set` `getOrElse` `increment` `decrement` |
-| `Boolean \| undefined`  | `OptionalBoolean` |`get` `set` `getOrElse`|
-| `Date \| undefined`  | `OptionalDate` |`get` `set` `getOrElse`|
-| `Array<T> \| undefined`  | `OptionalArray<T>` |`get` `set` `getOrElse` `append` `addUnique` `remove` |
+| `String \| undefined`  | `.string` | `get` `set` `getOrElse` |
+| `Number \| undefined`  | `.number` | `get` `set` `getOrElse` `increment` `decrement` |
+| `Boolean \| undefined`  | `.boolean` |`get` `set` `getOrElse`|
+| `Date \| undefined`  | `.date` |`get` `set` `getOrElse`|
+| `Array<T> \| undefined`  | `.array<T>` |`get` `set` `getOrElse` `append` `addUnique` `remove` |
 
-### Special Attributes
+### Special Fields
 
 `T` denotes the type of the target DbModel class.
+`.required()` does not have an effect on these fields.
 
 |  Name |Methods| Note|
 | ------------- | ------------- |------------- |
-|  `Pointer<T>` |`get` `set`| A reference to a single other object.  |
-|  `StringPointer<T>` |`get` `set`| Same as `Pointer` but expects DB field to be a string (uuid) instead of Parse-Pointer.  |
-|  `Relation<T>` |`add` `remove`, `query`, `findAll` | A reference to a group of other objects. |
-|  `SyntheticRelation<T>` | `query`, `findAll` | Synthesizes a relation like attribute from the fact that the target class has a pointer to this object. |
+|  `.pointer<T>` |`get` `set`| A reference to a single other object.  |
+|  `.stringPointer<T>` |`get` `set`| Same as `Pointer` but expects DB field to be a string (uuid) instead of Parse-Pointer.  |
+|  `.relation<T>` |`add` `remove`, `query`, `findAll` | A reference to a group of other objects. |
+|  `.syntheticRelation<T>` | `query`, `findAll` | Synthesizes a relation like field from the fact that the target class has a pointer to this object. |
 
 
 
@@ -201,7 +201,7 @@ import { Cloud, Primitive } from "parse-sdk-ts";
 
 const getAuthor = Cloud.declare<(book: Book) => Primitive.User>(
     "get_author",
-    ["book"]
+    ["bookId"]
 )
 const author: User = new User(await getAuthor(book))
 ```

@@ -11,7 +11,8 @@
   "keywords": [],
   "author": "Theodor Lundqvist",
   "dependencies": {
-    "parse-sdk-ts": "file:.."
+    "parse-sdk-ts": "file:..",
+    "parse": "4.2.0"
   },
   "devDependencies": {
     "rimraf": "^5.0.5",

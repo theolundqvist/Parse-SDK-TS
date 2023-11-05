@@ -1,10 +1,11 @@
 import { Primitive } from "../db";
-import { Activatable, wrap } from "../util/Wrapper";
-import { DbModel } from "../models/DbModel";
-import { Key } from "../misc/Key";
+import { Activatable, wrap } from "../util";
+import { Key, TypedKey } from "../misc/Key";
 import { Query } from "../misc/Query";
+import { IDbModel } from "../models/IDbModel";
 
 // SOME BASE CLASSES
+//
 
 export abstract class AttributeBase {
   abstract toString(): string;
@@ -27,11 +28,11 @@ export abstract class AttributeBase {
 }
 
 export class Attribute<T> extends AttributeBase {
-  protected readonly obj: DbModel;
+  protected readonly obj: IDbModel;
   protected readonly data: Primitive.Object;
   protected readonly key: string;
   protected readonly fallback?: T;
-  constructor(obj: DbModel, key: Key, fallback?: T) {
+  constructor(obj: IDbModel, key: Key, fallback?: T) {
     super();
     this.data = obj.data;
     this.obj = obj;
@@ -67,6 +68,9 @@ export class OptionalAttribute<T> extends Attribute<T | undefined> {
     const d = this.data.get(this.key);
     return d === undefined || d === null ? defaultValue : d;
   }
+  has(): boolean {
+    return this.data.has(this.key) && this.get() !== undefined && this.get() !== null;
+  }
 }
 
 // STANDARD ATTRIBUTES
@@ -84,6 +88,7 @@ export class OptionalDate extends OptionalAttribute<Date> { }
 
 //TODO: add typed objects
 export class RequiredObject<Object> extends Attribute<Object> { }
+export class OptionalObject<Object> extends OptionalAttribute<Object> { }
 
 // ARRAY ATTRIBUTES
 // We got some code duplication here, but trust me, we will be ok.
@@ -190,24 +195,24 @@ export class File extends Attribute<Primitive.File | undefined> {
   }
 }
 
-export class Pointer<T extends DbModel> extends Attribute<T> {
+export class Pointer<T extends IDbModel> extends Attribute<T | undefined> {
   private readonly type: Activatable<T>;
 
-  constructor(type: Activatable<T>, obj: DbModel, key: Key) {
+  constructor(type: Activatable<T>, obj: IDbModel, key: Key) {
     super(obj, key);
     this.type = type;
   }
 
-  get(): T {
+  get(): T | undefined {
     const d = this.data.get(this.key);
     return wrap(this.type, d);
   }
 
-  set(obj: DbModel | string): this {
-    if (typeof obj === "string") {
-      this.data.set(this.key, obj);
-    } else {
+  set(obj: IDbModel | string | undefined): this {
+    if (typeof obj === "object") {
       this.data.set(this.key, obj.data);
+    } else {
+      this.data.set(this.key, obj);
     }
     return this;
   }
@@ -230,13 +235,13 @@ export class Pointer<T extends DbModel> extends Attribute<T> {
   }
 }
 
-export class StringPointer<T extends DbModel> extends AttributeBase {
+export class StringPointer<T extends IDbModel> extends AttributeBase {
   private readonly type: Activatable<T>;
-  private readonly obj: DbModel;
+  private readonly obj: IDbModel;
   private readonly data: Primitive.Object;
   private readonly key: string;
 
-  constructor(type: Activatable<T>, obj: DbModel, key: Key) {
+  constructor(type: Activatable<T>, obj: IDbModel, key: Key) {
     super();
     this.type = type;
     this.obj = obj;
@@ -247,8 +252,8 @@ export class StringPointer<T extends DbModel> extends AttributeBase {
   private className = () => (new this.type()).className;
 
   get(): T | undefined {
-    const d : string | undefined = this.data?.get(this.key);
-    if(d === undefined) return undefined;
+    const d: string | undefined = this.data?.get(this.key);
+    if (d === undefined) return undefined;
 
     const t = Primitive.Object.extend(this.className());
     const pointer = t.createWithoutData(d);
@@ -256,10 +261,10 @@ export class StringPointer<T extends DbModel> extends AttributeBase {
     return wrap(this.type, pointer);
   }
 
-  set(obj: DbModel | string | undefined): this {
+  set(obj: IDbModel | string | undefined): this {
     if (typeof obj === "string") {
       this.data.set(this.key, obj);
-    } else if (typeof obj === "undefined"){
+    } else if (typeof obj === "undefined") {
       this.data.set(this.key, undefined);
     } else {
       this.data.set(this.key, obj.id);
@@ -284,12 +289,12 @@ export class StringPointer<T extends DbModel> extends AttributeBase {
   }
 }
 
-export class Relation<T extends DbModel> extends AttributeBase {
+export class Relation<T extends IDbModel> extends AttributeBase {
   private readonly data: Primitive.Object;
   private readonly key: string;
   private readonly type: Activatable<T>;
 
-  constructor(type: Activatable<T>, obj: DbModel, key: Key) {
+  constructor(type: Activatable<T>, obj: IDbModel, key: Key) {
     super();
     this.type = type;
     this.data = obj.data;
@@ -337,12 +342,12 @@ export class Relation<T extends DbModel> extends AttributeBase {
 /**
  * Creates a synthetic relation attribute from the fact that the target class has a pointer/relation to the current class.
  */
-export class SyntheticRelation<T extends DbModel> extends AttributeBase {
+export class SyntheticRelation<T extends IDbModel> extends AttributeBase {
   private readonly data: Primitive.Object;
   private readonly type: Activatable<T>;
   private readonly targetKey: Key;
 
-  constructor(type: Activatable<T>, obj: DbModel, targetKey: Key) {
+  constructor(type: Activatable<T>, obj: IDbModel, targetKey: Key) {
     super();
     this.type = type;
     this.data = obj.data;
@@ -378,5 +383,5 @@ export class SyntheticRelation<T extends DbModel> extends AttributeBase {
 }
 
 /** Obsolete (name change), use SyntheticRelation instead */
-export class SynthesizedRelation<T extends DbModel>
+export class SynthesizedRelation<T extends IDbModel>
   extends SyntheticRelation<T> { }
