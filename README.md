@@ -151,11 +151,11 @@ field(this).required(fallback).string(User.keys.username)
 
 | Type  | Name | Methods|
 | ------------- | ------------- |------------- |
-| `String \| undefined`  | `.string` | `get` `set` `getOrElse` |
-| `Number \| undefined`  | `.number` | `get` `set` `getOrElse` `increment` `decrement` |
-| `Boolean \| undefined`  | `.boolean` |`get` `set` `getOrElse`|
-| `Date \| undefined`  | `.date` |`get` `set` `getOrElse`|
-| `Array<T> \| undefined`  | `.array<T>` |`get` `set` `getOrElse` `append` `addUnique` `remove` |
+| `String \| undefined`  | `.string` | `get` `set` `has` `getOrElse` |
+| `Number \| undefined`  | `.number` | `get` `set` `has` `getOrElse` `increment` `decrement` |
+| `Boolean \| undefined`  | `.boolean` |`get` `set` `has` `getOrElse`|
+| `Date \| undefined`  | `.date` |`get` `set` `has` `getOrElse`|
+| `Array<T> \| undefined`  | `.array<T>` |`get` `set` `has` `getOrElse` `append` `addUnique` `remove` |
 
 ### Special Fields
 
