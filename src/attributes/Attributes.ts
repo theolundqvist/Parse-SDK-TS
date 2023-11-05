@@ -68,6 +68,9 @@ export class OptionalAttribute<T> extends Attribute<T | undefined> {
     const d = this.data.get(this.key);
     return d === undefined || d === null ? defaultValue : d;
   }
+  has(): boolean {
+    return this.data.has(this.key) && this.get() !== undefined && this.get() !== null;
+  }
 }
 
 // STANDARD ATTRIBUTES
