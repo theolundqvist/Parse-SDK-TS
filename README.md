@@ -106,16 +106,16 @@ import { field } from "parse-sdk-ts"
 readonly title = this.field().string(Book.keys.title);
 ```
 
-To be able to create a new object without data you would want to add the following static method.
+To be able to create a new object without data you may want to add the following static method.
 ```ts
 static create() {
-  return this.createWithoutData(); //protected method
+  return DbModel.createWithoutData(Book);
 }
 ```
 Or to ensure that `Required` fields can't be undefined.
 ```ts
 static create(title: string, description: string) {
-  const b = this.createWithoutData();
+  const b = DbModel.createWithoutData(Book);
   b.title.set(title);
   b.description.set(description);
   return b;

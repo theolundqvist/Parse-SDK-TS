@@ -22,8 +22,9 @@ export abstract class DbModel implements IDbModel {
     this.className = data.className;
     // this.className = data.className;
   }
-  protected createWithoutData():this {
-    return this.constructor(new Primitive.Object(this.className));
+
+  static createWithoutData<T extends IDbModel>(target: Activatable<T>):T {
+    return new target(new Primitive.Object((target as any).className));
   }
 
   protected field() {

@@ -68,22 +68,22 @@ export class AttributeBuilder<T extends IDbModel> {
 
   file(key: TypedKey<T>) {
     this.warnRequired(key, "file");
-    return new _.File(this.model, key);
+    return new _.File(this.model, key) as _.File;
   }
   pointer<G extends IDbModel, T extends IDbModel>(target: Activatable<G>, key: TypedKey<T>): _.Pointer<G> {
     this.warnRequired(key, "pointer");
-    return new _.Pointer(target, this.model, key);
+    return new _.Pointer(target, this.model, key) as _.Pointer<G>;
   }
   stringPointer<G extends IDbModel>(target: Activatable<G>, key: TypedKey<T>) {
     this.warnRequired(key, "stringPointer");
-    return new _.StringPointer(target, this.model, key);
+    return new _.StringPointer(target, this.model, key) as _.StringPointer<G>;
   }
   relation<G extends IDbModel>(target: Activatable<G>, key: TypedKey<T>) {
     this.warnRequired(key, "relation");
-    return new _.Relation(target, this.model, key);
+    return new _.Relation(target, this.model, key) as _.Relation<G>;
   }
   syntheticRelation<G extends IDbModel>(target: Activatable<G>, targetKey: TypedKey<T>) {
     this.warnRequired(targetKey, "syntheticRelation");
-    return new _.SyntheticRelation(target, this.model, targetKey);
+    return new _.SyntheticRelation(target, this.model, targetKey) as _.SyntheticRelation<G>;
   }
 }

@@ -20,7 +20,7 @@ export class Book extends DbModel {
   readonly description = this.field().string(Book.keys.description);
 
   static create(title: string, author: User){
-    const b = this.createWithoutData() 
+    const b = DbModel.createWithoutData(Book);
     b.title.set(title);
     b.authors.add(author);
     return b;
