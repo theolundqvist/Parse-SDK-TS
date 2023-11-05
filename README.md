@@ -201,7 +201,7 @@ import { Cloud, Primitive } from "parse-sdk-ts";
 
 const getAuthor = Cloud.declare<(book: Book) => Primitive.User>(
     "get_author",
-    ["bookId"]
+    ["book"]
 )
 const author: User = new User(await getAuthor(book))
 ```
