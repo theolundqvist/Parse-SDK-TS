@@ -1,5 +1,5 @@
 # Parse Typescript SDK
-A client side library for typescript that provides type-safety for database classes, queries and cloud functions.
+A client/server library for typescript that provides type-safety for database classes, queries and cloud functions.
 
 Built on top of [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS).
 
