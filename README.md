@@ -145,7 +145,7 @@ field(this).required(fallback).string(User.keys.username)
 | `Number`  | `.required().number` |`get` `set` `increment` `decrement` |
 | `Boolean`  | `.required().boolean` |`get` `set`|
 | `Date`  | `.required().date` |`get` `set`|
-| `Array<T>`  | `.required.array<T>` |`get` `set` `append` `addUnique` `remove`|
+| `Array<T>`  | `.required().array<T>` |`get` `set` `append` `addUnique` `remove`|
 
 ### Optional Fields
 
