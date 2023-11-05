@@ -1,4 +1,3 @@
-import * as _ from "parse-sdk-ts/attributes";
 
 import {
   Primitive,
@@ -17,13 +16,10 @@ export class Book extends DbModel {
     description: "desc",
   });
 
-  readonly title       = new _.RequiredString(this, Book.keys.title);
-  readonly authors     = new _.Relation(User, this, Book.keys.authors);
-  readonly description = new _.OptionalString(this, Book.keys.description);
+  readonly title       = this.string(Book.keys.title);
+  readonly authors     = this.relation(User, Book.keys.authors);
+  readonly description = this.optional().string(Book.keys.description);
 
-  constructor(data: Primitive.Object) {
-    super(data, Book.keys);
-  }
   static create(title: string, author: User){
     const b = new Book(new Primitive.Object(Book.className))
     b.title.set(title);
