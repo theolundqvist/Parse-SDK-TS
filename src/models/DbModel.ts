@@ -1,24 +1,72 @@
 import { Primitive } from "../db";
-import { DbError } from "../misc";
-import { AttributeBase } from "../attributes";
-import {KeyMap} from "../misc/Key";
+import { DbError } from "../misc/DbError";
+import { AttributeBase, AttributeBuilder } from "../attributes";
+import { TypedKey } from "../misc/Key";
+import { Activatable } from "../util/Activatable";
+import { IDbModel } from "./IDbModel";
 
-
-export abstract class DbModel {
+export abstract class DbModel implements IDbModel {
   readonly data: Primitive.Object;
-  private readonly keys: KeyMap = {};
   /** The id of the object */
   id: string;
   /** The database className of the object */
   readonly className: string;
 
-  constructor(data: Parse.Object, keys: KeyMap) {
+  constructor(data: Parse.Object) {
     if (!data) throw new Error("Tried to create DbModel of undefined");
     this.data = data;
-    this.keys = keys;
     this.id = data.id;
     this.className = data.className;
     // this.className = data.className;
+  }
+
+  protected string(key: TypedKey<this>) {
+    return AttributeBuilder.create(this).string(key);
+  }
+  protected number(key: TypedKey<this>) {
+    return AttributeBuilder.create(this).number(key);
+  }
+  protected boolean(key: TypedKey<this>) {
+    return AttributeBuilder.create(this).boolean(key);
+  }
+  protected date(key: TypedKey<this>) {
+    return AttributeBuilder.create(this).date(key);
+  }
+  protected array<T>(key: TypedKey<this>) {
+    return AttributeBuilder.create(this).array<T>(key);
+  }
+  protected object(key: TypedKey<this>) {
+    return AttributeBuilder.create(this).object(key);
+  }
+  protected pointer<G extends DbModel>(
+    target: Activatable<G>,
+    key: TypedKey<this>,
+  ) {
+    return AttributeBuilder.create(this).pointer(target, key);
+  }
+  protected relation<G extends DbModel>(
+    target: Activatable<G>,
+    key: TypedKey<this>,
+  ) {
+    return AttributeBuilder.create(this).relation(target, key);
+  }
+  protected stringPointer<G extends DbModel>(
+    target: Activatable<G>,
+    key: TypedKey<this>,
+  ) {
+    return AttributeBuilder.create(this).stringPointer(target, key);
+  }
+  protected file(key: TypedKey<this>) {
+    return AttributeBuilder.create(this).file(key);
+  }
+  protected optional() {
+    return AttributeBuilder.create(this).optional();
+  }
+  protected syntheticRelation<G extends DbModel>(
+    target: Activatable<G>,
+    key: TypedKey<this>,
+  ) {
+    return AttributeBuilder.create(this).syntheticRelation(target, key);
   }
 
   /** The time the object was created */
@@ -44,7 +92,7 @@ export abstract class DbModel {
   }
 
   /** Delete the object from the database */
-  async destroy(options: {useMasterKey?: boolean} = {}) {
+  async destroy(options: { useMasterKey?: boolean } = {}) {
     return this.data.destroy(options).catch(DbError.parse);
   }
 
@@ -57,7 +105,7 @@ export abstract class DbModel {
     return this.data.getACL();
   }
 
-  async fetch(options: {useMasterKey?: boolean} = {}) {
+  async fetch(options: { useMasterKey?: boolean } = {}) {
     return this.data.fetch(options).then(() => this).catch(DbError.parse);
   }
 
@@ -66,13 +114,13 @@ export abstract class DbModel {
       ...this,
     } as any;
     delete temp.data;
-    delete temp.keys;
     Object.keys(temp).forEach((k: any) => {
-      if(temp[k] instanceof AttributeBase)
-        temp[k] = temp[k].printable()
-    })
-    temp.createdAt= this.createdAt()
-    temp.updatedAt= this.updatedAt()
+      if (temp[k] instanceof AttributeBase) {
+        temp[k] = temp[k].printable();
+      }
+    });
+    temp.createdAt = this.createdAt();
+    temp.updatedAt = this.updatedAt();
     return temp;
   }
 }

@@ -34,8 +34,8 @@ export class Function<T extends (...args: any) => any> {
 
 export function declare<T extends (...args: any) => any>(
   name: string,
-  argNames: string[]
+  argNames?: string[]
 ): (...args: Parameters<T>) => Promise<ReturnType<T>> {
-  const f = new Function<T>(name, argNames);
+  const f = new Function<T>(name, argNames || []);
   return f.run;
 }

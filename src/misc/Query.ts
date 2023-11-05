@@ -1,12 +1,11 @@
 import { Primitive } from "../db";
-import { DbModel} from "../models";
+import { IDbModel} from "../models";
 import { DbError } from "./DbError";
-import { IKey } from "./Key";
-import { Activatable, wrap } from "../util/Wrapper";
+import { TypedKey } from "./Key";
+import { Activatable, wrap } from "../util";
 
-export class Query<T extends DbModel> {
+export class Query<T extends IDbModel> {
   private readonly type: Activatable<T>;
-  private readonly keys: string[];
   private readonly className: string;
   readonly targetClassName: string;
   private q: Primitive.Query;
@@ -19,15 +18,9 @@ export class Query<T extends DbModel> {
     if (!Object.keys(type).includes("className")) {
       throw new Error("Invalid type does not have a className.");
     }
-    if (!Object.keys(type).includes("keys")) {
-      throw new Error("Invalid type does not have a className.");
-    }
 
     this.className = (type as any).className;
     this.targetClassName = this.className;
-    this.keys = Object.values(((type as any).keys) as {[key:string]: IKey}).map((k) =>
-      k.name
-    );
     this.type = type;
     this.q = new Primitive.Query(this.className);
   }
@@ -41,13 +34,6 @@ export class Query<T extends DbModel> {
     return this.useMasterKey();
   }
 
-  /** Checks if the key is present in `keys`. If not, an error is thrown.*/
-  private checkKey(key: IKey) {
-    // console.log(this.keys)
-    if (!this.keys.includes(key.name)) {
-      throw new Error(`Key ${key.name} does not exist on ${this.className}.`);
-    }
-  }
 
   /** Finds and returns all records matching the query*/
   async find(): Promise<T[]> {
@@ -90,30 +76,26 @@ export class Query<T extends DbModel> {
   }
 
   /** Matches a field (`key`) with a specific `value`*/
-  equalTo(key: IKey, value: any): this {
-    if (value instanceof DbModel) value = value.data;
-    this.checkKey(key);
+  equalTo(key: TypedKey<T>, value: any): this {
+    if(value["className"] && value["data"]) value = value.data;
     this.q.equalTo(key.name, value);
     return this;
   }
 
   /** Excludes fields (`key`) from the query*/
-  exclude(...key: IKey[]): this {
-    key.forEach((k) => this.checkKey(k));
+  exclude(...key: TypedKey<T>[]): this {
     this.q.exclude(...key.map((k) => k.name));
     return this;
   }
 
   /** Selects fields (`keys`) to be returned by the query*/
-  select(...keys: IKey[]): this {
-    keys.forEach((k) => this.checkKey(k));
+  select(...keys: TypedKey<T>[]): this {
     this.q.select(...keys.map((k) => k.name));
     return this;
   }
 
   /** Include pointers (`keys`) in the query result*/
-  includePointed(...keys: IKey[]): this {
-    keys.forEach((k) => this.checkKey(k));
+  includePointed(...keys: TypedKey<T>[]): this {
     this.q.include(...keys.map((k) => k.name));
     return this;
   }
@@ -125,55 +107,48 @@ export class Query<T extends DbModel> {
   }
 
   /** Orders results in ascending order by a specified `key`*/
-  ascending(key: IKey): this {
-    this.checkKey(key);
+  ascending(key: TypedKey<T>): this {
     this.q.ascending(key.name);
     return this;
   }
 
   /** Orders results in descending order by a specified `key`*/
-  descending(key: IKey): this {
-    this.checkKey(key);
+  descending(key: TypedKey<T>): this {
     this.q.addDescending(key.name);
     return this;
   }
 
   /** Adds a condition where the value of a field (`key`) must start with a specified `prefix`*/
-  startsWith(key: IKey, prefix: string): this {
-    this.checkKey(key);
+  startsWith(key: TypedKey<T>, prefix: string): this {
     this.q.startsWith(key.name, prefix);
     return this;
   }
 
   /** Adds a condition where the value of a field (`key`) must be less than the (`value`)*/
-  less(key: IKey, value: any): this {
-    this.checkKey(key);
+  less(key: TypedKey<T>, value: any): this {
     this.q.lessThan(key.name, value);
     return this;
   }
 
   /** Adds a condition where the value of a field (`key`) must be less than or equal the (`value`)*/
-  lessOrEqual(key: IKey, value: any): this {
-    this.checkKey(key);
+  lessOrEqual(key: TypedKey<T>, value: any): this {
     this.q.lessThanOrEqualTo(key.name, value);
     return this;
   }
 
   /** Adds a condition where the value of a field (`key`) must be greater than the (`value`)*/
-  greater(key: IKey, value: any): this {
-    this.checkKey(key);
+  greater(key: TypedKey<T>, value: any): this {
     this.q.greaterThan(key.name, value);
     return this;
   }
 
   /** Adds a condition where the value of a field (`key`) must be greater than or equal the (`value`)*/
-  greaterOrEqual(key: IKey, value: any): this {
-    this.checkKey(key);
+  greaterOrEqual(key: TypedKey<T>, value: any): this {
     this.q.greaterThanOrEqualTo(key.name, value);
     return this;
   }
 
-  static wrap<T extends DbModel>(
+  static wrap<T extends IDbModel>(
     type: Activatable<T>,
     query: Primitive.Query,
   ): Query<T> {

@@ -73,7 +73,7 @@ export class MyUser extends DbModel {
   readonly username = new _.RequiredString(this, MyUser.keys.username);
 
   constructor(data: Primitive.User) {
-    super(data, MyUser.keys);
+    super(data);
   }
 }
 ```
@@ -94,10 +94,6 @@ export class Book extends DbModel {
   readonly title       = new _.RequiredString(this, Book.keys.title);
   readonly authors     = new _.Relation(User, this, Book.keys.authors);
   readonly description = new _.OptionalString(this, Book.keys.description);
-
-  constructor(data: Primitive.Object) {   // Note argument type
-    super(data, Book.keys);
-  }
 }
 ```
 
