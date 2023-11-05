@@ -1,13 +1,13 @@
-[![npm version](https://badge.fury.io/js/parse-sdk-ts.svg)](https://badge.fury.io/js/parse-sdk-ts)
-[![License](https://img.shields.io/badge/License-Apache2.0-blue.svg)](https://opensource.org/licenses/Apache2.0)
-
-# Parse-SDK-TS
-A client side library for typescript that provides type-safety for database classes, queries and cloud functions.
+# Parse Typescript SDK
+A client/server library for typescript that provides type-safety for database classes, queries and cloud functions.
 
 Built on top of [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS), which is a version agnostic peer dependency.
 
 Tested in SSR environment on Next and Nuxt. 🧪
 
+#### Package info
+[![npm version](https://badge.fury.io/js/parse-sdk-ts.svg)](https://badge.fury.io/js/parse-sdk-ts)
+[![License](https://img.shields.io/badge/License-Apache2.0-blue.svg)](https://opensource.org/licenses/Apache2.0)
 
 
 ## Justification
