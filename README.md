@@ -4,7 +4,7 @@
 # Parse-SDK-TS
 A client side library for typescript that provides type-safety for database classes, queries and cloud functions.
 
-Built on top of [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS).
+Built on top of [Parse-SDK-JS](https://github.com/parse-community/Parse-SDK-JS), which is a version agnostic peer dependency.
 
 Tested in SSR environment on Next and Nuxt. 🧪
 
@@ -66,26 +66,28 @@ To provide typings, all classes on the database must be wrapped with some logic.
 ```ts
 export class MyUser extends DbModel {
   static readonly className: string = "_User";
+
   static readonly keys = Keys.build(MyUser, {
     username: "username",
   });
 
   readonly username = field(this).required().string(MyUser.keys.username);
 
-  // make sure only Parse.User can be passed
+  // to make sure only Parse.User can be passed
   constructor(data: Primitive.User) {
     super(data);
   }
 }
 ```
-For a non-user object it's about the same
+For a non-user object it's the same
 ```ts
 import User from './User'
 
 export class Book extends DbModel {
   static readonly className: string = "Book";
+
+  // client_key: "db_key", //
   static readonly keys = Keys.build(Book, {
-    // client_key: "db_key",
     title: "book_title",
     authors: "authors",
     description: "desc",
@@ -107,7 +109,7 @@ readonly title = this.field().string(Book.keys.title);
 To be able to create a new object without data you would want to add the following static method.
 ```ts
 static create() {
-  return this.createWithoutData();
+  return this.createWithoutData(); //protected method
 }
 ```
 Or to ensure that `Required` fields can't be undefined.
@@ -162,10 +164,10 @@ field(this).required(fallback).string(User.keys.username)
 
 |  Name |Methods| Note|
 | ------------- | ------------- |------------- |
-|  `Pointer<T>` |`get` `set`| A reference to a single other object.  |
-|  `StringPointer<T>` |`get` `set`| Same as `Pointer` but expects DB field to be a string (uuid) instead of Parse-Pointer.  |
-|  `Relation<T>` |`add` `remove`, `query`, `findAll` | A reference to a group of other objects. |
-|  `SyntheticRelation<T>` | `query`, `findAll` | Synthesizes a relation like field from the fact that the target class has a pointer to this object. |
+|  `.pointer<T>` |`get` `set`| A reference to a single other object.  |
+|  `.stringPointer<T>` |`get` `set`| Same as `Pointer` but expects DB field to be a string (uuid) instead of Parse-Pointer.  |
+|  `.relation<T>` |`add` `remove`, `query`, `findAll` | A reference to a group of other objects. |
+|  `.syntheticRelation<T>` | `query`, `findAll` | Synthesizes a relation like field from the fact that the target class has a pointer to this object. |
 
 
 
@@ -199,7 +201,7 @@ import { Cloud, Primitive } from "parse-sdk-ts";
 
 const getAuthor = Cloud.declare<(book: Book) => Primitive.User>(
     "get_author",
-    ["book"]
+    ["bookId"]
 )
 const author: User = new User(await getAuthor(book))
 ```
