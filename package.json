@@ -6,20 +6,33 @@
   "type": "module",
   "description": "",
   "scripts": {
-    "build": "rimraf -rf dist && tsc && madge --extensions js,ts --circular .",
+    "build": "rimraf -rf dist && tsc",
+    "check": "madge --extensions js,ts --circular .",
     "release": "release-it"
   },
-  "keywords": ["parse", "server", "sdk", "typescript", "javascript", "typed", "type-safety", "type-safe"],
+  "keywords": [
+    "parse",
+    "server",
+    "sdk",
+    "typescript",
+    "javascript",
+    "typed",
+    "type-safety",
+    "type-safe"
+  ],
   "author": "Theodor Lundqvist",
   "dependencies": {
     "@types/parse": "3.0.4",
-    "parse": "4.2.0"
+    "crypto-js": "^4.2.0"
+  },
+  "peerDependencies": {
+    "parse": ">3.4.0"
   },
   "devDependencies": {
+    "madge": "6.1.0",
     "release-it": "16.2.1",
     "rimraf": "5.0.5",
-    "typescript": "5.2.2",
-    "madge": "6.1.0"
+    "typescript": "5.2.2"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

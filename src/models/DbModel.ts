@@ -1,9 +1,12 @@
 import { Primitive } from "../db";
 import { DbError } from "../misc/DbError";
 import { AttributeBase, AttributeBuilder } from "../attributes";
-import { TypedKey } from "../misc/Key";
-import { Activatable } from "../util/Activatable";
 import { IDbModel } from "./IDbModel";
+import { Activatable } from "../util/Activatable";
+
+export function field<T extends IDbModel>(model: T) {
+  return AttributeBuilder.create(model)
+}
 
 export abstract class DbModel implements IDbModel {
   readonly data: Primitive.Object;
@@ -19,54 +22,12 @@ export abstract class DbModel implements IDbModel {
     this.className = data.className;
     // this.className = data.className;
   }
+  protected createWithoutData():this {
+    return this.constructor(new Primitive.Object(this.className));
+  }
 
-  protected string(key: TypedKey<this>) {
-    return AttributeBuilder.create(this).string(key);
-  }
-  protected number(key: TypedKey<this>) {
-    return AttributeBuilder.create(this).number(key);
-  }
-  protected boolean(key: TypedKey<this>) {
-    return AttributeBuilder.create(this).boolean(key);
-  }
-  protected date(key: TypedKey<this>) {
-    return AttributeBuilder.create(this).date(key);
-  }
-  protected array<T>(key: TypedKey<this>) {
-    return AttributeBuilder.create(this).array<T>(key);
-  }
-  protected object(key: TypedKey<this>) {
-    return AttributeBuilder.create(this).object(key);
-  }
-  protected pointer<G extends DbModel>(
-    target: Activatable<G>,
-    key: TypedKey<this>,
-  ) {
-    return AttributeBuilder.create(this).pointer(target, key);
-  }
-  protected relation<G extends DbModel>(
-    target: Activatable<G>,
-    key: TypedKey<this>,
-  ) {
-    return AttributeBuilder.create(this).relation(target, key);
-  }
-  protected stringPointer<G extends DbModel>(
-    target: Activatable<G>,
-    key: TypedKey<this>,
-  ) {
-    return AttributeBuilder.create(this).stringPointer(target, key);
-  }
-  protected file(key: TypedKey<this>) {
-    return AttributeBuilder.create(this).file(key);
-  }
-  protected optional() {
-    return AttributeBuilder.create(this).optional();
-  }
-  protected syntheticRelation<G extends DbModel>(
-    target: Activatable<G>,
-    key: TypedKey<this>,
-  ) {
-    return AttributeBuilder.create(this).syntheticRelation(target, key);
+  protected field() {
+    return AttributeBuilder.create(this);
   }
 
   /** The time the object was created */

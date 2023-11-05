@@ -40,8 +40,8 @@ export class Keys {
   static build<G extends IDbModel, T>(
     modelType: Activatable<G>,
     keyNameMap: { [K in keyof T]: T[K] },
-  ): TypedKeyMap {
-    const result: TypedKeyMap = {} as {
+  ): { [K in keyof T]: TypedKey<G> } {
+    const result: { [K in keyof T]: TypedKey<G> } = {} as {
       [K in keyof T]: TypedKey<G>;
     };
     for (const name in keyNameMap) {
@@ -55,4 +55,3 @@ export class Keys {
 }
 
 export type KeyMap = { [key: string]: Key };
-export type TypedKeyMap = { [key: string]: Key };
