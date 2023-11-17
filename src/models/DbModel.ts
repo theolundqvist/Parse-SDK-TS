@@ -1,11 +1,11 @@
-import { Primitive } from "../db";
+import { DatabasePrimitive, Primitive } from "../db";
 import { DbError } from "../misc/DbError";
 import { AttributeBase, AttributeBuilder } from "../attributes";
 import { IDbModel } from "./IDbModel";
 import { Activatable } from "../util/Activatable";
 
 export function field<T extends IDbModel>(model: T) {
-  return AttributeBuilder.create(model)
+  return AttributeBuilder.create(model);
 }
 
 export abstract class DbModel implements IDbModel {
@@ -23,12 +23,29 @@ export abstract class DbModel implements IDbModel {
     // this.className = data.className;
   }
 
-  static createWithoutData<T extends IDbModel>(target: Activatable<T>):T {
+  static createWithoutData<T extends IDbModel>(target: Activatable<T>): T {
     return new target(new Primitive.Object((target as any).className));
   }
 
   protected field() {
     return AttributeBuilder.create(this);
+  }
+
+  /** Save the object to the local database/cache **/
+  pin(): void {
+    this.data.pin();
+  }
+  /** Save the object to the local database/cache **/
+  cache(): void {
+    this.pin();
+  }
+  /** Remove the object from the local database/cache **/
+  unPin(): void {
+    this.data.unPin();
+  }
+  /** Remove the object from the local database/cache **/
+  unCache(): void {
+    this.unPin();
   }
 
   /** The time the object was created */

@@ -3,6 +3,7 @@ import { IDbModel} from "../models";
 import { DbError } from "./DbError";
 import { TypedKey } from "./Key";
 import { Activatable, wrap } from "../util";
+import { LiveQuery } from "./LiveQuery";
 
 export class Query<T extends IDbModel> {
   private readonly type: Activatable<T>;
@@ -146,6 +147,18 @@ export class Query<T extends IDbModel> {
   greaterOrEqual(key: TypedKey<T>, value: any): this {
     this.q.greaterThanOrEqualTo(key.name, value);
     return this;
+  }
+
+
+  /** Runs the query against the local datastore instead of the live network **/
+  fromCache(): this {
+    this.q.fromLocalDatastore();
+    return this;
+  }
+
+  /** Open a websocket to the server and listen for changes to the query **/
+  async subscribe(): Promise<LiveQuery<T>> {
+    return new LiveQuery(this.type, await this.q.subscribe());
   }
 
   static wrap<T extends IDbModel>(
