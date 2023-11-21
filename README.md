@@ -49,7 +49,7 @@ Data is accessed via attributes instead of via string keys.
 console.log(user.username.get())
 user.username.set("new name")    // string
 user.level.increment()           // number
-user.weapons.addUnique("sword")  // relation 
+user.weapons.addUnique("sword")  // array 
 user.save()
 ```
 
@@ -192,7 +192,7 @@ Cloud.declare<(arg1: string, arg2: number) => number>(
     ["arg1", "arg2"] // db expected argument names
 )
 
-const result:string = await myFunction("hello", 42)
+const result:number = await myFunction("hello", 42)
 ```
 
 It is even supported to pass our custom DbModel classes.
