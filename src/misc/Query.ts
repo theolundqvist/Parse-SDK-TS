@@ -148,6 +148,12 @@ export class Query<T extends IDbModel> {
     return this;
   }
 
+  /** Adds a constraint to the query that requires a particular key's value to be contained in the provided list of values. */
+  containedIn(key: TypedKey<T>, values: any[]): this {
+    this.q.containedIn(key.name, values);
+    return this;
+  }
+
   static wrap<T extends IDbModel>(
     type: Activatable<T>,
     query: Primitive.Query,
