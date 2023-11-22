@@ -11,7 +11,6 @@ import { User } from "./models/User"
 export function signIn(emailOrUsername: string, password: string): Promise<User> {
   return auth.signIn(User, emailOrUsername, password)
 }
-
 export function signUp(email: string, username: string, password: string): Promise<User> {
   return auth.signUp(User, email, username, password)
 }
@@ -24,6 +23,6 @@ export function current(): User | null {
   return auth.current(User)
 }
 
-export function requestPasswordReset(email: string): Promise<void> {
+export async function requestPasswordReset(email: string): Promise<void> {
   return auth.requestPasswordReset(email).then(() => {})
 }
