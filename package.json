@@ -23,7 +23,8 @@
   "author": "Theodor Lundqvist",
   "dependencies": {
     "@types/parse": "3.0.4",
-    "crypto-js": "^4.2.0"
+    "crypto-js": "^4.2.0",
+    "w3c-xmlhttprequest": "^3.0.4"
   },
   "peerDependencies": {
     "parse": ">3.4.0"

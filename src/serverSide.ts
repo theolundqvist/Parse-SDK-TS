@@ -1,6 +1,6 @@
-import Parse from 'parse';
+import Parse from "parse";
 
-export default function init(){
+export default function init() {
   let mockStorage: any = {};
   const mockLocalStorage = {
     getItem(path: string | number): any {
@@ -29,15 +29,18 @@ export default function init(){
     },
   };
   global.localStorage = mockLocalStorage;
-  global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+  //global.XMLHttpRequest = XMLHttpRequest as any;
   // Parse.User.enableUnsafeCurrentUser(); //parse.current on node
   // (Parse.Object as any).enableSingleInstance();
-  if(process.env.MASTERKEY as string)
-    Parse.masterKey = process.env.MASTERKEY as string
-  else if (process.env.READONLY_MASTERKEY as string)
-    Parse.masterKey = process.env.READONLY_MASTERKEY as string
+  if (process.env.MASTERKEY as string) {
+    Parse.masterKey = process.env.MASTERKEY as string;
+  } else if (process.env.READONLY_MASTERKEY as string) {
+    Parse.masterKey = process.env.READONLY_MASTERKEY as string;
+  }
 
-  (Parse.CoreManager as any).getRESTController()._setXHR(require('xmlhttprequest').XMLHttpRequest);
+  // (Parse.CoreManager as any).getRESTController()._setXHR(
+  //   XMLHttpRequest,
+  // );
 
   //DatabasePrimitive.Object.enableSingleInstance(); // should be disabled in server env
 }
